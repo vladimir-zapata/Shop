@@ -10,7 +10,7 @@ namespace Shop.Web.Models
         public DateTime OrderDate { get; set; }
         public DateTime ShippedDate { get; set; }
         public int ShipperID { get; set; }
-        public int Freight { get; set; }
+        public double Freight { get; set; }
         public string ShipName { get; set; }
         public string ShipAddress { get; set; }
         public string ShipCity { get; set; }
