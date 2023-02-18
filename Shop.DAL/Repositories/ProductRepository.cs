@@ -29,7 +29,7 @@ namespace Shop.DAL.Repositories
                     SupplierId = product.SupplierId,
                     CategoryId = product.CategoryId,
                     UnitPrice = product.UnitPrice,
-                    Discontinued = product.Discontinued,
+                    Discontinued = false,
                     CreationDate = DateTime.Now,
                     CreationUser = product.CreationUser
                 };
@@ -55,8 +55,8 @@ namespace Shop.DAL.Repositories
                 productToUpdate.Discontinued = product.Discontinued;
                 productToUpdate.ModifyDate = DateTime.Now;
                 productToUpdate.ModifyUser = product.ModifyUser;
-                this._productContext.SaveChanges();
 
+                this._productContext.SaveChanges();
 
             } catch(Exception ex) 
             {
@@ -72,7 +72,6 @@ namespace Shop.DAL.Repositories
                 productToRemove.DeleteDate = DateTime.Now;
                 productToRemove.DeleteUser = product.DeleteUser;
                 productToRemove.Deleted= true;
-                productToRemove.Discontinued = true;
 
                 this.Update(productToRemove);
                 this._productContext.SaveChanges();
@@ -88,7 +87,7 @@ namespace Shop.DAL.Repositories
         }
         public List<Product> GetAll()
         {
-            return this._productContext.Products.ToList();
+            return this._productContext.Products.Where(x => !x.Deleted).ToList();
         }
         public bool Exists(string name)
         {

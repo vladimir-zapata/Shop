@@ -26,7 +26,7 @@ namespace Shop.API
             //Context
             services.AddDbContext<ProductContext>(options => options.UseSqlServer(this.Configuration.GetConnectionString("ShopContext")));
             //Repositories
-            services.AddTransient<IProductRepository, ProductRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
