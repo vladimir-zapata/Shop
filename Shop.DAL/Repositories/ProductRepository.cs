@@ -10,10 +10,10 @@ namespace Shop.DAL.Repositories
 {
     public class ProductRepository : IProductRepository
     {
-        private readonly ProductContext _productContext;
+        private readonly ShopContext _productContext;
         private readonly ILogger _logger;
 
-        public ProductRepository(ProductContext productContext, ILogger<IProductRepository> logger)
+        public ProductRepository(ShopContext productContext, ILogger<IProductRepository> logger)
         {
             this._productContext = productContext;
             this._logger = logger;

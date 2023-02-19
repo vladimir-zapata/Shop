@@ -24,7 +24,7 @@ namespace Shop.API
         public void ConfigureServices(IServiceCollection services)
         {
             //Context
-            services.AddDbContext<ProductContext>(options => options.UseSqlServer(this.Configuration.GetConnectionString("ShopContext")));
+            services.AddDbContext<ShopContext>(options => options.UseSqlServer(this.Configuration.GetConnectionString("ShopContext")));
             //Repositories
             services.AddScoped<IProductRepository, ProductRepository>();
 
