@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Shop.API.Request.Users;
-using Shop.API.Response.Users;
+using Shop.API.Response.User;
 using Shop.DAL.Entities;
 using Shop.DAL.Interfaces;
 using System.Collections.Generic;
@@ -13,23 +13,24 @@ namespace Shop.API.Controllers
     {
         private readonly IUserRepository _userRepository;
 
-        public UserController(IUserRepository userRepository) 
-        { 
-           this._userRepository = userRepository;
+        public UserController(IUserRepository userRepository)
+        {
+            this._userRepository = userRepository;
         }
 
         [HttpGet]
         public IActionResult GetAll()
         {
-            List<UserResponse> userList= new List<UserResponse>();
+            List<UserResponse> userList = new List<UserResponse>();
 
             var users = _userRepository.GetAll();
 
-            users.ForEach(user => userList.Add(new UserResponse() { 
+            users.ForEach(user => userList.Add(new UserResponse()
+            {
                 Name = user.Name,
-                Email= user.Email,
+                Email = user.Email,
             }));
-            
+
             return Ok(userList);
         }
 
@@ -38,9 +39,9 @@ namespace Shop.API.Controllers
         {
             var user = _userRepository.GetById(id);
 
-            if(user == null) return NotFound();
+            if (user == null) return NotFound();
 
-            return Ok(new UserResponse() { Name = user.Name, Email = user.Email});
+            return Ok(new UserResponse() { Name = user.Name, Email = user.Email });
         }
 
         [HttpPost("SaveUser")]
@@ -50,7 +51,7 @@ namespace Shop.API.Controllers
             {
                 Email = userRequest.Email,
                 Password = userRequest.Password,
-                Name= userRequest.Name,
+                Name = userRequest.Name,
                 CreationUser = userRequest.CreationUser
             };
 
@@ -63,10 +64,10 @@ namespace Shop.API.Controllers
         {
             var user = new User()
             {
-                UserId= userUpdate.UserId,
+                UserId = userUpdate.UserId,
                 Email = userUpdate.Email,
                 Password = userUpdate.Password,
-                Name= userUpdate.Name,
+                Name = userUpdate.Name,
                 ModifyUser = userUpdate.ModifyUser
             };
 
@@ -77,9 +78,9 @@ namespace Shop.API.Controllers
         [HttpDelete("DeleteUser")]
         public IActionResult Delete([FromBody] DeleteUserRequest userDelete)
         {
-            var user = new User() 
+            var user = new User()
             {
-                UserId= userDelete.UserId,
+                UserId = userDelete.UserId,
                 DeleteUser = userDelete.DeleteUser
             };
 

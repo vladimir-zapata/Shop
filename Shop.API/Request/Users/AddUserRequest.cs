@@ -8,6 +8,6 @@ namespace Shop.API.Request.Users
         public string Password { get; set; }
         public string Name { get; set; }
         public int CreationUser { get; set; }
-
+        public int UserId { get; internal set; }
     }
 }

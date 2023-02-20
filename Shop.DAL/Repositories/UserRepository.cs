@@ -22,10 +22,7 @@ namespace Shop.DAL.Repositories
         {
             return this.shopContext.Users.Any(st => st.Name == name);
         }
-        public List<User> GetAll()
-        {
-            return this.shopContext.Users.Where(x => !x.Deleted).ToList();
-        }
+        public List<User> GetAll() => shopContext.Users.Where(x => !x.Deleted).ToList();
 
         public User GetById(int userId)
         {
