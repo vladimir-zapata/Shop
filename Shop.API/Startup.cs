@@ -1,11 +1,15 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Shop.DAL.Context;
+using Shop.DAL.Interfaces;
+using Shop.DAL.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +29,9 @@ namespace Shop.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<ShopContext>(options => options.UseSqlServer(this.Configuration.GetConnectionString("ShopContext")));
 
+            services.AddTransient<IOrdersRepository, OrdersRepository>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
