@@ -16,7 +16,7 @@ namespace Shop.DAL.Entities
         public string? ContactName { get; set; }
 
         [Column("contacttitle")]
-        public int ContactTitle { get; set; }
+        public string? ContactTitle { get; set; }
 
     }
 }
