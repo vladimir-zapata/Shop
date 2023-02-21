@@ -24,7 +24,7 @@ namespace Shop.DAL.Repository
         }
         public bool Exists(string name)
         {
-            return this.context.Customers.Any(st => st.companyname == name);
+            return this.context.Customers.Any(st => st.CompanyName == name);
         }
 
         public List<Customer> GetAll()
@@ -36,7 +36,7 @@ namespace Shop.DAL.Repository
 
         bool ICustomer.Exists(string companyname)
         {
-            return this.context.Customers.Any(st => st.companyname == companyname);
+            return this.context.Customers.Any(st => st.CompanyName == companyname);
         }
 
         public List<Customer> GetAll(string Customer)
@@ -54,7 +54,7 @@ namespace Shop.DAL.Repository
         {
             try
             {
-                Customer customerToRemove = this.GetById(customer.custid);
+                Customer customerToRemove = this.GetById(customer.CustId);
 
                 customerToRemove.DeleteDate = DateTime.Now;
                 customerToRemove.DeleteUser = customer.DeleteUser;
@@ -70,14 +70,51 @@ namespace Shop.DAL.Repository
             }
         }
 
-        void ICustomer.Save(Customer customer)
+        public void Save(Customer customer)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Customer customerToAdd = new Customer()
+                {
+                    CustId = customer.CustId,
+                    CompanyName = customer.CompanyName,
+                    ContactName = customer.ContactName,
+                    ContactTitle = customer.ContactTitle,
+
+                };
+
+                this.context.Customers!.Add(customerToAdd);
+                this.context.SaveChanges();
+
+            }
+            catch (Exception ex)
+            {
+                this.ilogger.LogError($"Error adding customer", ex.ToString());
+            }
         }
 
-        void ICustomer.Update(Customer customer)
+        public void Update(Customer customer)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Customer customerToAdd = new Customer()
+                {
+                    CustId = customer.CustId,
+                    CompanyName = customer.CompanyName,
+                    ContactName = customer.ContactName,
+                    ContactTitle = customer.ContactTitle,
+                    
+
+                };
+
+                
+                this.context.SaveChanges();
+
+            }
+            catch (Exception ex)
+            {
+                this.ilogger.LogError($"Error updating customer", ex.ToString());
+            }
         }
     }
 }

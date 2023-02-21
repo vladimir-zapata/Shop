@@ -4,19 +4,19 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Shop.DAL.Entities
 {
     [Table("Customers", Schema = "Customer")]
-    public class EntityCustomer : Customer
+    public class Customer : AuditEntity
     {
         [Column("custid")]
         public int CustId { get; set; }
 
         [Column("companyname")]
-        public string? Companyname { get; set; }
+        public string? CompanyName { get; set; }
 
         [Column("contactname")]
-        public string? Contactname { get; set; }
+        public string? ContactName { get; set; }
 
         [Column("contacttitle")]
-        public int Contacttitle { get; set; }
+        public int ContactTitle { get; set; }
 
     }
 }
