@@ -23,7 +23,7 @@ namespace Shop.API.Controllers
         {
             List<ProductResponse> products = new List<ProductResponse>();
 
-            var productsFromDB = _productRepository.GetAll();
+            var productsFromDB = _productRepository.GetEntities();
 
             if (productsFromDB == null) return NotFound("No products found");
 
@@ -45,7 +45,7 @@ namespace Shop.API.Controllers
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            var product = _productRepository.GetById(id);
+            var product = _productRepository.GetEntity(id);
 
             if(product == null) return NotFound("User not found");
 
@@ -73,6 +73,7 @@ namespace Shop.API.Controllers
             };
 
             _productRepository.Save(productToSave);
+            _productRepository.SaveChanges();
 
             return Ok();
         }
