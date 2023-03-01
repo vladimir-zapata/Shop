@@ -1,17 +1,21 @@
 ﻿using Shop.DAL.Core;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace Shop.DAL.Entities
 {
     [Table("Orders", Schema = "Sales")]
     public class Orders : AuditEntity
     {
+        public decimal Budget { get; set; }
+        public int? Administrator { get; set; }
         public Orders()
         {
             CreationDate = DateTime.Now;
             Deleted = false;
         }
+        [Key]
         [Column("orderid")]
         public int OrderID { get; set; }
         [Column("custid")]
@@ -38,5 +42,6 @@ namespace Shop.DAL.Entities
         public int ShipPostalCode { get; set; }
         [Column("shipcountry")]
         public string ShipCountry { get; set; }
+
     }
 }
