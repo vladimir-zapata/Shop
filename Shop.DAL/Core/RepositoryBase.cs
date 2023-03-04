@@ -48,11 +48,14 @@ namespace Shop.DAL.Core
         public virtual void Save(TEntity entity)
         {
             this.myEntity.Add(entity);
+            this.context.SaveChanges();
+
         }
 
         public virtual void Save(TEntity[] entities)
         {
             this.myEntity.AddRange(entities);
+            this.context.SaveChanges();
         }
 
         public virtual void SaveChanges()
@@ -63,11 +66,13 @@ namespace Shop.DAL.Core
         public virtual void Update(TEntity entity)
         {
             this.context.Update(entity);
+            this.context.SaveChanges();
         }
 
         public virtual void Update(TEntity[] entities)
         {
             this.context.UpdateRange(entities);
+            this.context.SaveChanges();
         }
     }
 }

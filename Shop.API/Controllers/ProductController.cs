@@ -73,7 +73,6 @@ namespace Shop.API.Controllers
             };
 
             _productRepository.Save(productToSave);
-            _productRepository.SaveChanges();
 
             return Ok();
         }
