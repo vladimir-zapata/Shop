@@ -15,7 +15,5 @@ namespace Shop.API.Response.Orders
         public string ShipRegion { get; set; }
         public int ShipPostalCode { get; set; }
         public string ShipCountry { get; set; }
-        public int? Administrator { get; set; }
-        public decimal Budget { get; set; }
     }
 }

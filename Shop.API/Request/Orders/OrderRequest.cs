@@ -1,11 +1,21 @@
-﻿namespace Shop.API.Request.Orders
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System;
+
+namespace Shop.API.Request.Orders
 {
     public class OrderRequest : RequestBase
     {
-        
-        public int shipperID { get; set; }
-        public int orderID { get; set; }
-        public string shipAddress { get; set; }
-        public string shipName { get; set; }
+
+        public int OrderID { get; set; }
+        public DateTime? OrderDate { get; set; }
+        public DateTime? ShippedDate { get; set; }
+        public int ShipperID { get; set; }
+        public double Freight { get; set; }
+        public string ShipName { get; set; }
+        public string ShipAddress { get; set; }
+        public string ShipCity { get; set; }
+        public string ShipRegion { get; set; }
+        public int ShipPostalCode { get; set; }
+        public string ShipCountry { get; set; }
     }
 }

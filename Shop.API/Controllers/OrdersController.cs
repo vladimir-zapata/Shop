@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+using Shop.API.Request.Orders;
+using Shop.API.Response.Orders;
 using Shop.DAL.Entities;
 using Shop.DAL.Interfaces;
-using Shop.API.Response.Orders;
-using Shop.API.Request.Orders;
+using System.Collections.Generic;
+using Shop.API.Response;
+
 
 namespace Shop.API.Controllers
 {
@@ -17,41 +19,28 @@ namespace Shop.API.Controllers
         {
             this._ordersRepository = ordersRepository;
         }
-        
+
         [HttpGet]
         public IActionResult GetAll()
         {
-            List<OrdersResponse> orders = new List<OrdersResponse>();
+            List<Orders> employeeList = new List<Orders>();
 
-            var ordersfromDatabase = _ordersRepository.GetEntities();
-
-            if (ordersfromDatabase == null) return NotFound("No orders found");
-
-            ordersfromDatabase.ForEach(orders => orders.Add(
-                        new OrdersResponse()
-                        {
-                            OrderID = orders.OrderID,
-                            OrderDate = orders.OrderDate,
-                            ShippedDate = orders.ShippedDate,
-
-                        }
-                  ));
+            var orders = this._ordersRepository.GetEntities();
 
             return Ok(orders);
+
         }
 
-
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public IActionResult GetEntity(int id)
         {
             var orders = _ordersRepository.GetEntity(id);
 
-            if (orders == null) return NotFound("User not found");
+            if (orders == null) return NotFound("Order not found");
 
             return Ok(new OrdersResponse()
             {
-                Administrator = orders.Administrator,
-                Budget = orders.Budget,
+                OrderID = orders.OrderID,
                 ShipName = orders.ShipName,
                 ShipAddress = orders.ShipAddress,
                 ShipCity = orders.ShipCity,
@@ -61,37 +50,34 @@ namespace Shop.API.Controllers
             });
         }
 
-        
+
         [HttpPost("Save")]
-        public IActionResult Post([FromBody] OrdersAddRequest orders)
+        public IActionResult CreateOrder([FromBody] OrdersAddRequest orders)
         {
-            Orders orderstoAdd = new Orders()
+            var orderstoAdd = new Orders()
             {
-                Administrator = orders.Administrator,
-                Budget = orders.Budget,
-                CreationDate = orders.CreateDate,
-                CreationUser = orders.CreateUser,
-                ShipName = orders.ShipName, 
+                OrderID = orders.OrderID,
+                ShipName = orders.ShipName,
                 ShipAddress = orders.ShipAddress,
                 ShipCity = orders.ShipCity,
                 ShipRegion = orders.ShipRegion,
                 ShipCountry = orders.ShipCountry,
                 OrderDate = orders.OrderDate,
             };
+
             _ordersRepository.Save(orderstoAdd);
+            _ordersRepository.SaveChanges();
+
             return Ok();
         }
 
-        
+
         [HttpPut("Update")]
-        public IActionResult Put([FromBody] ModifyOrderRequest orders)
+        public IActionResult ModifyOrder([FromBody] ModifyOrderRequest orders)
         {
-            Orders orderstoUpdate = new Orders()
+            var productToModify = new Orders()
             {
-                Administrator = orders.Administrator,
-                Budget = orders.Budget,
-                CreationDate = orders.CreateDate,
-                CreationUser = orders.CreateUser,
+                OrderID = orders.OrderID,
                 ShipName = orders.ShipName,
                 ShipAddress = orders.ShipAddress,
                 ShipCity = orders.ShipCity,
@@ -99,29 +85,25 @@ namespace Shop.API.Controllers
                 ShipCountry = orders.ShipCountry,
                 OrderDate = orders.OrderDate,
             };
-            _ordersRepository.Update(orderstoUpdate);
+
+            _ordersRepository.Update(productToModify);
+
             return Ok();
         }
 
-        
+
         [HttpDelete("Remove")]
-        public IActionResult Remove([FromBody] DeleteOrder orders)
+        public IActionResult Delete([FromBody] DeleteOrder orders)
         {
-            Orders orderstoRemove = new Orders()
+            var productToRemove = new Orders()
             {
-                Administrator = orders.Administrator,
-                Budget = orders.Budget,
-                CreationDate = orders.CreateDate,
-                CreationUser = orders.CreateUser,
-                ShipName = orders.ShipName,
-                ShipAddress = orders.ShipAddress,
-                ShipCity = orders.ShipCity,
-                ShipRegion = orders.ShipRegion,
-                ShipCountry = orders.ShipCountry,
-                OrderDate = orders.OrderDate,
+                OrderID = orders.OrderID,
+                DeleteUser = orders.RequestUser
             };
-            _ordersRepository.Remove(orderstoRemove);
-            return Ok();
+
+            _ordersRepository.Remove(productToRemove);
+
+            return NoContent();
         }
     }
 }

@@ -8,8 +8,6 @@ namespace Shop.DAL.Entities
     [Table("Orders", Schema = "Sales")]
     public class Orders : AuditEntity
     {
-        public decimal Budget { get; set; }
-        public int? Administrator { get; set; }
         public Orders()
         {
             CreationDate = DateTime.Now;
@@ -19,10 +17,6 @@ namespace Shop.DAL.Entities
         [Column("orderid")]
         public int OrderID { get; set; }
         [Column("custid")]
-        public int CustID { get; set; }
-        [Column("empid")]
-        public int EmpID { get; set; }
-        [Column("orderdate")]
         public DateTime? OrderDate { get; set; }
         [Column("shippeddate")]
         public DateTime? ShippedDate { get; set; }

@@ -27,7 +27,7 @@ namespace Shop.DAL.Core
 
         public virtual List<TEntity> GetEntities()
         {
-            return this.myEntity.ToList();
+            return myEntity.ToList();
         }
 
         public virtual TEntity GetEntity(int id)

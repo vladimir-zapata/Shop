@@ -1,4 +1,6 @@
-﻿namespace Shop.API.Request.Orders
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Shop.API.Request.Orders
 {
     public class ModifyOrderRequest : OrderRequest
     {
