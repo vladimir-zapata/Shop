@@ -17,7 +17,13 @@ namespace Shop.DAL.Entities
         [Column("orderid")]
         public int OrderID { get; set; }
         [Column("custid")]
+        public int CustomerID { get; set; }
+        [Column("empid")]
+        public int EmployeeID { get; set; }
+        [Column("orderdate")]
         public DateTime? OrderDate { get; set; }
+        [Column("requireddate")]
+        public DateTime? RequiredDate { get; set; }
         [Column("shippeddate")]
         public DateTime? ShippedDate { get; set; }
         [Column("shipperid")]

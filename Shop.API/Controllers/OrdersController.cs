@@ -41,12 +41,19 @@ namespace Shop.API.Controllers
             return Ok(new OrdersResponse()
             {
                 OrderID = orders.OrderID,
+                CustomerID = orders.CustomerID,
+                EmployeeID = orders.EmployeeID,
+                OrderDate = orders.OrderDate,
+                RequiredDate = orders.RequiredDate,
+                ShippedDate = orders.ShippedDate,
+                ShipperID = orders.ShipperID,
+                Freight = orders.Freight,
                 ShipName = orders.ShipName,
                 ShipAddress = orders.ShipAddress,
                 ShipCity = orders.ShipCity,
                 ShipRegion = orders.ShipRegion,
-                ShipCountry = orders.ShipCountry,
-                OrderDate = orders.OrderDate,
+                ShipPostalCode = orders.ShipPostalCode,
+                ShipCountry = orders.ShipCountry,              
             });
         }
 
@@ -57,12 +64,19 @@ namespace Shop.API.Controllers
             var orderstoAdd = new Orders()
             {
                 OrderID = orders.OrderID,
+                CustomerID = orders.CustomerID,
+                EmployeeID = orders.EmployeeID,
+                OrderDate = orders.OrderDate,
+                RequiredDate = orders.RequiredDate,
+                ShippedDate = orders.ShippedDate,
+                ShipperID = orders.ShipperID,
+                Freight = orders.Freight,
                 ShipName = orders.ShipName,
                 ShipAddress = orders.ShipAddress,
                 ShipCity = orders.ShipCity,
                 ShipRegion = orders.ShipRegion,
+                ShipPostalCode = orders.ShipPostalCode,
                 ShipCountry = orders.ShipCountry,
-                OrderDate = orders.OrderDate,
             };
 
             _ordersRepository.Save(orderstoAdd);
@@ -78,12 +92,19 @@ namespace Shop.API.Controllers
             var productToModify = new Orders()
             {
                 OrderID = orders.OrderID,
+                CustomerID = orders.CustomerID,
+                EmployeeID = orders.EmployeeID,
+                OrderDate = orders.OrderDate,
+                RequiredDate = orders.RequiredDate,
+                ShippedDate = orders.ShippedDate,
+                ShipperID = orders.ShipperID,
+                Freight = orders.Freight,
                 ShipName = orders.ShipName,
                 ShipAddress = orders.ShipAddress,
                 ShipCity = orders.ShipCity,
                 ShipRegion = orders.ShipRegion,
+                ShipPostalCode = orders.ShipPostalCode,
                 ShipCountry = orders.ShipCountry,
-                OrderDate = orders.OrderDate,
             };
 
             _ordersRepository.Update(productToModify);
