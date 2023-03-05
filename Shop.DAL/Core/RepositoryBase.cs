@@ -38,11 +38,13 @@ namespace Shop.DAL.Core
         public virtual void Remove(TEntity entity)
         {
              this.myEntity.Remove(entity);
+            this.context.SaveChanges();
         }
 
         public virtual void Remove(TEntity[] entities)
         {
             this.myEntity.RemoveRange(entities);
+            this.context.SaveChanges();
         }
 
         public virtual void Save(TEntity entity)

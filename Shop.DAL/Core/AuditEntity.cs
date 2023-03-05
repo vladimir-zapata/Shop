@@ -12,16 +12,16 @@ namespace Shop.DAL.Core
         }
 
         [Column("creation_date")]
-        public DateTime? CreationDate { get; set; }
+        public DateTime CreationDate { get; set; }
 
         [Column("creation_user")]
-        public int? CreationUser { get; set; }
+        public int CreationUser { get; set; }
 
         [Column("modify_date")]
         public DateTime? ModifyDate { get; set; }
 
         [Column("modify_user")]
-        public int ModifyUser { get; set; }
+        public int? ModifyUser { get; set; }
 
         [Column("delete_user")]
         public int? DeleteUser { get; set; }

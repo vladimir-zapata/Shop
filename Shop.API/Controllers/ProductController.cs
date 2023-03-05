@@ -4,6 +4,7 @@ using Shop.DAL.Entities;
 using Shop.DAL.Interfaces;
 using Shop.API.Response.Product;
 using Shop.API.Request.Product;
+using System;
 
 namespace Shop.API.Controllers
 {
@@ -63,6 +64,7 @@ namespace Shop.API.Controllers
         [HttpPost("CreateProduct")]
         public IActionResult CreateProduct([FromBody] AddProductRequest product)
         {
+
             var productToSave = new Product()
             {
                 ProductName = product.ProductName,
@@ -80,16 +82,18 @@ namespace Shop.API.Controllers
         [HttpPost("UpdateProduct")]
         public IActionResult ModifyProduct([FromBody] ModifyProductRequest product)
         {
-            var productToModify = new Product()
-            {
-                ProductId = product.ProductId,
-                ProductName = product.ProductName,
-                UnitPrice = product.UnitPrice,
-                CategoryId = product.CategoryId,
-                SupplierId = product.SupplierId,
-                Discontinued = product.Discontinued,
-                ModifyUser = product.RequestUser 
-            };
+            var productToModify = _productRepository.GetEntity(product.ProductId);
+
+            if (productToModify == null) return BadRequest();
+
+            productToModify.ProductId = product.ProductId;
+            productToModify.ProductName = product.ProductName;
+            productToModify.UnitPrice = product.UnitPrice;
+            productToModify.CategoryId = product.CategoryId;
+            productToModify.SupplierId = product.SupplierId;
+            productToModify.Discontinued = product.Discontinued;
+            productToModify.ModifyUser = product.RequestUser;
+            productToModify.ModifyDate = DateTime.Now;
 
             _productRepository.Update(productToModify);
 
@@ -99,13 +103,15 @@ namespace Shop.API.Controllers
         [HttpPost("DeleteProduct")]
         public IActionResult Delete([FromBody] DeleteProduct product)
         {
-            var productToRemove = new Product()
-            {
-                ProductId = product.ProductId,
-                DeleteUser = product.RequestUser
-            };
+            var productToDelete = _productRepository.GetEntity(product.ProductId);
 
-            _productRepository.Remove(productToRemove);
+            if (productToDelete == null) return BadRequest();
+
+            productToDelete.DeleteUser = product.RequestUser;
+            productToDelete.DeleteDate = DateTime.Now;
+            productToDelete.Deleted = true;
+
+            _productRepository.Update(productToDelete);
 
             return NoContent();
         }
