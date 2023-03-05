@@ -17,7 +17,6 @@ namespace Shop.DAL.Core
         {
             this.context = context;
             this.myEntity = context.Set<TEntity>();
-            
         }
 
         public virtual bool Exists(Expression<Func<TEntity, bool>> filter)

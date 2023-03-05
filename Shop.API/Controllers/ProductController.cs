@@ -1,10 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using Shop.DAL.Entities;
-using Shop.DAL.Interfaces;
-using Shop.API.Response.Product;
-using Shop.API.Request.Product;
-using System;
+using Shop.BLL.Contract;
 
 namespace Shop.API.Controllers
 {
@@ -12,108 +7,84 @@ namespace Shop.API.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly IProductRepository _productRepository;
+        private readonly IProductService _productService;
 
-        public ProductController(IProductRepository productRepository) 
+        public ProductController(IProductService productService) 
         {
-            this._productRepository = productRepository;
+            this._productService = productService;
         }
 
         [HttpGet]
         public IActionResult GetAll()
         {
-            List<ProductResponse> products = new List<ProductResponse>();
+            var result = _productService.GetAll();
 
-            var productsFromDB = _productRepository.GetEntities();
+            if(!result.Success) 
+                return BadRequest(result);
 
-            if (productsFromDB == null) return NotFound("No products found");
-
-            productsFromDB.ForEach(product => products.Add(
-                        new ProductResponse()
-                        {
-                            ProductId = product.ProductId,
-                            ProductName = product.ProductName,
-                            UnitPrice = product.UnitPrice,
-                            CategoryId = product.CategoryId,
-                            SupplierId = product.SupplierId,
-                            Discontinued = product.Discontinued,
-                        }
-                  ));
-
-            return Ok(products);
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            var product = _productRepository.GetEntity(id);
-
-            if(product == null) return NotFound("User not found");
-
-            return Ok(new ProductResponse()
-            {
-                ProductId = product.ProductId,
-                ProductName = product.ProductName,
-                UnitPrice = product.UnitPrice,
-                CategoryId = product.CategoryId,
-                SupplierId = product.SupplierId,
-                Discontinued = product.Discontinued
-            });
+            var product = _productService.GetById(id);
+            return Ok(product);
         }
 
-        [HttpPost("CreateProduct")]
-        public IActionResult CreateProduct([FromBody] AddProductRequest product)
-        {
+        //[HttpPost("CreateProduct")]
+        //public IActionResult CreateProduct([FromBody] AddProductRequest product)
+        //{
 
-            var productToSave = new Product()
-            {
-                ProductName = product.ProductName,
-                UnitPrice = product.UnitPrice,
-                CategoryId = product.CategoryId,
-                SupplierId = product.SupplierId,
-                CreationUser = product.RequestUser
-            };
+        //    var productToSave = new Product()
+        //    {
+        //        ProductName = product.ProductName,
+        //        UnitPrice = product.UnitPrice,
+        //        CategoryId = product.CategoryId,
+        //        SupplierId = product.SupplierId,
+        //        CreationUser = product.RequestUser
+        //    };
 
-            _productRepository.Save(productToSave);
+        //    _productRepository.Save(productToSave);
 
-            return Ok();
-        }
+        //    return Ok();
+        //}
 
-        [HttpPost("UpdateProduct")]
-        public IActionResult ModifyProduct([FromBody] ModifyProductRequest product)
-        {
-            var productToModify = _productRepository.GetEntity(product.ProductId);
+        //[HttpPost("UpdateProduct")]
+        //public IActionResult ModifyProduct([FromBody] ModifyProductRequest product)
+        //{
+        //    var productToModify = _productRepository.GetEntity(product.ProductId);
 
-            if (productToModify == null) return BadRequest();
+        //    if (productToModify == null) return BadRequest();
 
-            productToModify.ProductId = product.ProductId;
-            productToModify.ProductName = product.ProductName;
-            productToModify.UnitPrice = product.UnitPrice;
-            productToModify.CategoryId = product.CategoryId;
-            productToModify.SupplierId = product.SupplierId;
-            productToModify.Discontinued = product.Discontinued;
-            productToModify.ModifyUser = product.RequestUser;
-            productToModify.ModifyDate = DateTime.Now;
+        //    productToModify.ProductId = product.ProductId;
+        //    productToModify.ProductName = product.ProductName;
+        //    productToModify.UnitPrice = product.UnitPrice;
+        //    productToModify.CategoryId = product.CategoryId;
+        //    productToModify.SupplierId = product.SupplierId;
+        //    productToModify.Discontinued = product.Discontinued;
+        //    productToModify.ModifyUser = product.RequestUser;
+        //    productToModify.ModifyDate = DateTime.Now;
 
-            _productRepository.Update(productToModify);
+        //    _productRepository.Update(productToModify);
 
-            return Ok();
-        }
+        //    return Ok();
+        //}
 
-        [HttpPost("DeleteProduct")]
-        public IActionResult Delete([FromBody] DeleteProduct product)
-        {
-            var productToDelete = _productRepository.GetEntity(product.ProductId);
+        //[HttpPost("DeleteProduct")]
+        //public IActionResult Delete([FromBody] DeleteProduct product)
+        //{
+        //    var productToDelete = _productRepository.GetEntity(product.ProductId);
 
-            if (productToDelete == null) return BadRequest();
+        //    if (productToDelete == null) return BadRequest();
 
-            productToDelete.DeleteUser = product.RequestUser;
-            productToDelete.DeleteDate = DateTime.Now;
-            productToDelete.Deleted = true;
+        //    productToDelete.DeleteUser = product.RequestUser;
+        //    productToDelete.DeleteDate = DateTime.Now;
+        //    productToDelete.Deleted = true;
 
-            _productRepository.Update(productToDelete);
+        //    _productRepository.Update(productToDelete);
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
     }
 }
