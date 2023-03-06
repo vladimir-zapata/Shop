@@ -23,7 +23,7 @@ namespace Shop.API.Controllers
         {
             List<UserResponse> userList = new List<UserResponse>();
 
-            var users = _userRepository.GetAll();
+            var users = _userRepository.GetEntities();
 
             users.ForEach(user => userList.Add(new UserResponse()
             {
@@ -37,7 +37,7 @@ namespace Shop.API.Controllers
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            var user = _userRepository.GetById(id);
+            var user = _userRepository.GetEntity(id);
 
             if (user == null) return NotFound();
 
