@@ -5,7 +5,7 @@ using Shop.DAL.Entities;
 using Shop.DAL.Interfaces;
 using System.Collections.Generic;
 using Shop.API.Response;
-
+using Shop.BLL.Contract;
 
 namespace Shop.API.Controllers
 {
@@ -13,11 +13,11 @@ namespace Shop.API.Controllers
     [ApiController]
     public class OrdersController : ControllerBase
     {
-        private readonly IOrdersRepository _ordersRepository;
+        private readonly IOrdersService _ordersService;
 
-        public OrdersController(IOrdersRepository ordersRepository)
+        public OrdersController(IOrdersService ordersService)
         {
-            this._ordersRepository = ordersRepository;
+            this._ordersService = ordersService;
         }
 
         [HttpGet]
@@ -25,7 +25,7 @@ namespace Shop.API.Controllers
         {
             List<Orders> employeeList = new List<Orders>();
 
-            var orders = this._ordersRepository.GetEntities();
+            var orders = this._ordersService.GetAll();
 
             return Ok(orders);
 
@@ -34,27 +34,12 @@ namespace Shop.API.Controllers
         [HttpGet("{id}")]
         public IActionResult GetEntity(int id)
         {
-            var orders = _ordersRepository.GetEntity(id);
+            var result = this._ordersService.GetBbyID(id);
 
-            if (orders == null) return NotFound("Order not found");
+            if(!result.Success)
+                return BadRequest(result);
 
-            return Ok(new OrdersResponse()
-            {
-                OrderID = orders.OrderID,
-                CustomerID = orders.CustomerID,
-                EmployeeID = orders.EmployeeID,
-                OrderDate = orders.OrderDate,
-                RequiredDate = orders.RequiredDate,
-                ShippedDate = orders.ShippedDate,
-                ShipperID = orders.ShipperID,
-                Freight = orders.Freight,
-                ShipName = orders.ShipName,
-                ShipAddress = orders.ShipAddress,
-                ShipCity = orders.ShipCity,
-                ShipRegion = orders.ShipRegion,
-                ShipPostalCode = orders.ShipPostalCode,
-                ShipCountry = orders.ShipCountry,              
-            });
+            return Ok(result);
         }
 
 
@@ -70,17 +55,18 @@ namespace Shop.API.Controllers
                 RequiredDate = orders.RequiredDate,
                 ShippedDate = orders.ShippedDate,
                 ShipperID = orders.ShipperID,
-                Freight = orders.Freight,
+                Freight = (decimal)orders.Freight,
                 ShipName = orders.ShipName,
                 ShipAddress = orders.ShipAddress,
                 ShipCity = orders.ShipCity,
                 ShipRegion = orders.ShipRegion,
                 ShipPostalCode = orders.ShipPostalCode,
                 ShipCountry = orders.ShipCountry,
+                CreationUser = orders.RequestUser
             };
 
-            _ordersRepository.Save(orderstoAdd);
-            _ordersRepository.SaveChanges();
+           // _ordersRepository.Save(orderstoAdd);
+           // _ordersRepository.SaveChanges();
 
             return Ok();
         }
@@ -98,7 +84,7 @@ namespace Shop.API.Controllers
                 RequiredDate = orders.RequiredDate,
                 ShippedDate = orders.ShippedDate,
                 ShipperID = orders.ShipperID,
-                Freight = orders.Freight,
+                Freight = (decimal)orders.Freight,
                 ShipName = orders.ShipName,
                 ShipAddress = orders.ShipAddress,
                 ShipCity = orders.ShipCity,
@@ -107,7 +93,7 @@ namespace Shop.API.Controllers
                 ShipCountry = orders.ShipCountry,
             };
 
-            _ordersRepository.Update(productToModify);
+            //_ordersRepository.Update(productToModify);
 
             return Ok();
         }
@@ -122,7 +108,7 @@ namespace Shop.API.Controllers
                 DeleteUser = orders.RequestUser
             };
 
-            _ordersRepository.Remove(productToRemove);
+            //_ordersRepository.Remove(productToRemove);
 
             return NoContent();
         }

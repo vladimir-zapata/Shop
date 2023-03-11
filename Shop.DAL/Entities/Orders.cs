@@ -29,7 +29,7 @@ namespace Shop.DAL.Entities
         [Column("shipperid")]
         public int ShipperID { get; set; }
         [Column("freight")]
-        public double Freight { get; set; }
+        public decimal Freight { get; set; }
         [Column("shipname")]
         public string ShipName { get; set; }
         [Column("shipaddress")]
@@ -39,7 +39,7 @@ namespace Shop.DAL.Entities
         [Column("shipregion")]
         public string ShipRegion { get; set; }
         [Column("shippostalcode")]
-        public int ShipPostalCode { get; set; }
+        public string ShipPostalCode { get; set; }
         [Column("shipcountry")]
         public string ShipCountry { get; set; }
 

@@ -10,11 +10,13 @@ using Microsoft.OpenApi.Models;
 using Shop.DAL.Context;
 using Shop.DAL.Interfaces;
 using Shop.DAL.Repositories;
+using Shop.BLL.Services;
+using Shop.BLL.Contract;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
+using Shop.BLL.Contract;
 
 namespace Shop.API
 {
@@ -30,15 +32,25 @@ namespace Shop.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            // Context
             services.AddDbContext<ShopContext>(options => options.UseSqlServer(this.Configuration.GetConnectionString("ShopContext")));
 
+            // Dependencias //
+
+            // Repositories //
             services.AddTransient<IOrdersRepository, OrdersRepository>();
+
+            // APP Services //
+            services.AddTransient<IOrdersService, OrdersService>();
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Shop.API", Version = "v1" });
             });
         }
+            
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
