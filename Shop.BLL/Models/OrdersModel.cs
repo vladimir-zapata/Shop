@@ -17,11 +17,16 @@ namespace Shop.BLL.Models
         public string ShipCountry { get; set; }
         public DateTime OrderDate { get; set; }
         public DateTime ShippedDate { get; set; }
+        public DateTime RequiredDate { get; set; }
         public string OrderDateDisplay
         {
             get { return this.OrderDate.ToString("dd/MM/yyyy"); }
         }
             public string ShippedDateDisplay
+        {
+            get { return this.ShippedDate.ToString("dd/MM/yyyy"); }
+        }
+        public string RequiredDateDisplay
         {
             get { return this.ShippedDate.ToString("dd/MM/yyyy"); }
         }

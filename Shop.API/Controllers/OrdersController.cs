@@ -6,6 +6,7 @@ using Shop.DAL.Interfaces;
 using System.Collections.Generic;
 using Shop.API.Response;
 using Shop.BLL.Contract;
+using Shop.BLL.Dtos;
 
 namespace Shop.API.Controllers
 {
@@ -23,7 +24,6 @@ namespace Shop.API.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            List<Orders> employeeList = new List<Orders>();
 
             var orders = this._ordersService.GetAll();
 
@@ -36,81 +36,34 @@ namespace Shop.API.Controllers
         {
             var result = this._ordersService.GetBbyID(id);
 
-            if(!result.Success)
-                return BadRequest(result);
+            return Ok(result);
+        }
+
+
+        [HttpPost("CreateOrder")]
+        public IActionResult CreateOrder([FromBody] OrdersAddDto ordersAdd)
+        {
+            var result = this._ordersService.SaveOrder(ordersAdd);
 
             return Ok(result);
         }
 
 
-        [HttpPost("Save")]
-        public IActionResult CreateOrder([FromBody] OrdersAddRequest orders)
+        [HttpPost("UpdateOrder")]
+        public IActionResult ModifyOrder([FromBody] OrdersUpdateDto ordersUpdate)
         {
-            var orderstoAdd = new Orders()
-            {
-                OrderID = orders.OrderID,
-                CustomerID = orders.CustomerID,
-                EmployeeID = orders.EmployeeID,
-                OrderDate = orders.OrderDate,
-                RequiredDate = orders.RequiredDate,
-                ShippedDate = orders.ShippedDate,
-                ShipperID = orders.ShipperID,
-                Freight = (decimal)orders.Freight,
-                ShipName = orders.ShipName,
-                ShipAddress = orders.ShipAddress,
-                ShipCity = orders.ShipCity,
-                ShipRegion = orders.ShipRegion,
-                ShipPostalCode = orders.ShipPostalCode,
-                ShipCountry = orders.ShipCountry,
-                CreationUser = orders.RequestUser
-            };
+            var result = this._ordersService.UpdateOrder(ordersUpdate);
 
-           // _ordersRepository.Save(orderstoAdd);
-           // _ordersRepository.SaveChanges();
-
-            return Ok();
+            return Ok(result);
         }
 
 
-        [HttpPut("Update")]
-        public IActionResult ModifyOrder([FromBody] ModifyOrderRequest orders)
+        [HttpPost("RemoveOrder")]
+        public IActionResult Delete([FromBody] OrdersRemoveDto ordersRemove)
         {
-            var productToModify = new Orders()
-            {
-                OrderID = orders.OrderID,
-                CustomerID = orders.CustomerID,
-                EmployeeID = orders.EmployeeID,
-                OrderDate = orders.OrderDate,
-                RequiredDate = orders.RequiredDate,
-                ShippedDate = orders.ShippedDate,
-                ShipperID = orders.ShipperID,
-                Freight = (decimal)orders.Freight,
-                ShipName = orders.ShipName,
-                ShipAddress = orders.ShipAddress,
-                ShipCity = orders.ShipCity,
-                ShipRegion = orders.ShipRegion,
-                ShipPostalCode = orders.ShipPostalCode,
-                ShipCountry = orders.ShipCountry,
-            };
+            var result = this._ordersService.RemoveOrder(ordersRemove);
 
-            //_ordersRepository.Update(productToModify);
-
-            return Ok();
-        }
-
-
-        [HttpDelete("Remove")]
-        public IActionResult Delete([FromBody] DeleteOrder orders)
-        {
-            var productToRemove = new Orders()
-            {
-                OrderID = orders.OrderID,
-                DeleteUser = orders.RequestUser
-            };
-
-            //_ordersRepository.Remove(productToRemove);
-
-            return NoContent();
+            return Ok(result);
         }
     }
 }
