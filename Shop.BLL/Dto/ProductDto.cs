@@ -1,9 +1,10 @@
-﻿namespace Shop.API.Request.Product
-{
-    public abstract class ProductRequest : RequestBase
-    {
+﻿using Shop.BLL.Core;
 
-        public string ProductName { get; set; }
+namespace Shop.BLL.Dto
+{
+    public class ProductDto : DtoBase
+    {
+        public string ProductName { get; set; } = null!;
         public int SupplierId { get; set; }
         public int CategoryId { get; set; }
         public decimal UnitPrice { get; set; }

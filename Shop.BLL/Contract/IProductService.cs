@@ -1,10 +1,12 @@
 ﻿using Shop.BLL.Core;
+using Shop.BLL.Dto;
 
 namespace Shop.BLL.Contract
 {
-    public interface IProductService 
+    public interface IProductService : IBaseService 
     {
-        ServiceResult GetAll();
-        ServiceResult GetById(int id);
+        ServiceResult SaveProduct(SaveProductDto product);
+        ServiceResult UpdateProduct(UpdateProductDto product);
+        ServiceResult DeleteProduct(DeleteProductDto product);
     }
 }

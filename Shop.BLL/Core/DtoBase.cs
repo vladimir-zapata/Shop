@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Shop.API.Request
+namespace Shop.BLL.Core
 {
-    public abstract class RequestBase
+    public abstract class DtoBase
     {
         public int RequestUser { get; set; }
     }

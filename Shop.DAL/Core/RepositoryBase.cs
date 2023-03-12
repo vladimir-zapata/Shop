@@ -31,12 +31,12 @@ namespace Shop.DAL.Core
 
         public virtual TEntity GetEntity(int id)
         {
-            return this.myEntity.Find(id); 
+            return this.myEntity.Find(id);
         }
 
         public virtual void Remove(TEntity entity)
         {
-             this.myEntity.Remove(entity);
+            this.myEntity.Remove(entity);
             this.context.SaveChanges();
         }
 

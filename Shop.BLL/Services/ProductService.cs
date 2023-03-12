@@ -1,10 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
 using Shop.BLL.Contract;
 using Shop.BLL.Core;
+using Shop.BLL.Dto;
 using Shop.BLL.Models;
+using Shop.DAL.Entities;
 using Shop.DAL.Interfaces;
 using System;
 using System.Linq;
+using Shop.BLL.Extentions;
+using Shop.DAL.Repositories;
 
 namespace Shop.BLL.Services
 {
@@ -29,7 +33,6 @@ namespace Shop.BLL.Services
 
                 var products = _repository
                                    .GetEntities()
-                                   .Where(x => !x.Deleted)
                                    .Select(x => new ProductModel()
                                    {
                                        ProductId = x.ProductId,
@@ -87,6 +90,84 @@ namespace Shop.BLL.Services
             {
                 result.Success = false;
                 result.Message = $"Error obteniendo producto: {id}";
+                _logger.LogError($"{result.Message}", ex.ToString());
+            }
+
+            return result;
+        }
+
+        public ServiceResult SaveProduct(SaveProductDto savedProduct)
+        {
+            ServiceResult result = new ServiceResult();
+
+            try
+            {
+                Product product = savedProduct.GetProductFromSaveDto();
+
+                this._repository.Save(product);
+                result.Success = true;
+                result.Message = "El producto ha sido añadido correctamente";
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ha ocurrido un error guardando el producto";
+                _logger.LogError($"{result.Message}", ex.ToString());
+            }
+
+            return result;
+        }
+
+        public ServiceResult UpdateProduct(UpdateProductDto updatedProduct)
+        {
+            ServiceResult result = new ServiceResult();
+
+            try
+            {
+                Product product = _repository.GetEntity(updatedProduct.ProductId);
+
+                product.ProductName = updatedProduct.ProductName;
+                product.UnitPrice = updatedProduct.UnitPrice;
+                product.CategoryId = updatedProduct.CategoryId;
+                product.SupplierId = updatedProduct.SupplierId;
+                product.ModifyUser = updatedProduct.RequestUser;
+                product.ModifyDate = DateTime.Now;
+
+                this._repository.Update(product);
+                result.Success = true;
+                result.Message = "El producto ha sido modificado correctamente";
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ha ocurrido un error modificando el producto";
+                _logger.LogError($"{result.Message}", ex.ToString());
+            }
+
+            return result;
+        }
+
+        public ServiceResult DeleteProduct(DeleteProductDto deleteProduct)
+        {
+            ServiceResult result = new ServiceResult();
+
+            try
+            {
+                Product product = _repository.GetEntity(deleteProduct.ProductId);
+
+                product.DeleteUser = deleteProduct.RequestUser;
+                product.DeleteDate = DateTime.Now;
+                product.Deleted= true;
+
+                this._repository.Update(product);
+
+                result.Success = true;
+                result.Message = "El producto ha sido eliminado correctamente";
+            }
+            catch (Exception ex)
+            {
+                result.Success = false;
+                result.Message = "Ha ocurrido un error eliminando el producto";
                 _logger.LogError($"{result.Message}", ex.ToString());
             }
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Shop.BLL.Contract;
+using Shop.BLL.Dto;
 
 namespace Shop.API.Controllers
 {
@@ -32,59 +33,31 @@ namespace Shop.API.Controllers
             return Ok(product);
         }
 
-        //[HttpPost("CreateProduct")]
-        //public IActionResult CreateProduct([FromBody] AddProductRequest product)
-        //{
+        [HttpPost("CreateProduct")]
+        public IActionResult CreateProduct([FromBody] SaveProductDto product)
+        {
+            var result = _productService.SaveProduct(product);
 
-        //    var productToSave = new Product()
-        //    {
-        //        ProductName = product.ProductName,
-        //        UnitPrice = product.UnitPrice,
-        //        CategoryId = product.CategoryId,
-        //        SupplierId = product.SupplierId,
-        //        CreationUser = product.RequestUser
-        //    };
+            return Ok(result);
+        }
 
-        //    _productRepository.Save(productToSave);
+        [HttpPost("UpdateProduct")]
+        public IActionResult ModifyProduct([FromBody] UpdateProductDto product)
+        {
+            if (product.ProductId == 0) return BadRequest();
+            if (product.RequestUser == 0) return BadRequest();
 
-        //    return Ok();
-        //}
+            var result = _productService.UpdateProduct(product);
 
-        //[HttpPost("UpdateProduct")]
-        //public IActionResult ModifyProduct([FromBody] ModifyProductRequest product)
-        //{
-        //    var productToModify = _productRepository.GetEntity(product.ProductId);
+            return Ok(result);
+        }
 
-        //    if (productToModify == null) return BadRequest();
+        [HttpPost("DeleteProduct")]
+        public IActionResult Delete([FromBody] DeleteProductDto product)
+        {
+            var result = _productService.DeleteProduct(product);
 
-        //    productToModify.ProductId = product.ProductId;
-        //    productToModify.ProductName = product.ProductName;
-        //    productToModify.UnitPrice = product.UnitPrice;
-        //    productToModify.CategoryId = product.CategoryId;
-        //    productToModify.SupplierId = product.SupplierId;
-        //    productToModify.Discontinued = product.Discontinued;
-        //    productToModify.ModifyUser = product.RequestUser;
-        //    productToModify.ModifyDate = DateTime.Now;
-
-        //    _productRepository.Update(productToModify);
-
-        //    return Ok();
-        //}
-
-        //[HttpPost("DeleteProduct")]
-        //public IActionResult Delete([FromBody] DeleteProduct product)
-        //{
-        //    var productToDelete = _productRepository.GetEntity(product.ProductId);
-
-        //    if (productToDelete == null) return BadRequest();
-
-        //    productToDelete.DeleteUser = product.RequestUser;
-        //    productToDelete.DeleteDate = DateTime.Now;
-        //    productToDelete.Deleted = true;
-
-        //    _productRepository.Update(productToDelete);
-
-        //    return NoContent();
-        //}
+            return Ok(result);
+        }
     }
 }
