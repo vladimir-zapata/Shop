@@ -2,13 +2,12 @@
 using Shop.BLL.Contract;
 using Shop.BLL.Core;
 using Shop.BLL.Dto;
-using Shop.BLL.Models;
 using Shop.DAL.Entities;
 using Shop.DAL.Interfaces;
 using System;
 using System.Linq;
 using Shop.BLL.Extentions;
-using Shop.DAL.Repositories;
+using Shop.DAL.Exceptions;
 
 namespace Shop.BLL.Services
 {
@@ -33,18 +32,16 @@ namespace Shop.BLL.Services
 
                 var products = _repository
                                    .GetEntities()
-                                   .Select(x => new ProductModel()
-                                   {
-                                       ProductId = x.ProductId,
-                                       ProductName = x.ProductName,
-                                       CategoryId = x.CategoryId,
-                                       Discontinued = x.Discontinued,
-                                       SupplierId = x.SupplierId,
-                                       UnitPrice = x.UnitPrice
-                                   })
+                                   .Select(x => x.GetProductModelFromProduct())
                                    .ToList();
 
                 result.Data = products;
+            }
+            catch (ProductDataException proex)
+            {
+                result.Success = false;
+                result.Message = proex.Message;
+                _logger.LogError($"{result.Message}", proex.ToString());
             }
             catch (Exception ex)
             {
@@ -64,7 +61,7 @@ namespace Shop.BLL.Services
             {
                 _logger.LogInformation($"Consultando producto con id {id}");
 
-                var product = _repository.GetEntity(id);
+                Product product = _repository.GetEntity(id);
 
                 if (product == null || product.Deleted)
                 {
@@ -73,18 +70,16 @@ namespace Shop.BLL.Services
                 }
                 else
                 {
-                    ProductModel productModel = new ProductModel()
-                    {
-                        ProductId = product.ProductId,
-                        ProductName = product.ProductName,
-                        CategoryId = product.CategoryId,
-                        SupplierId = product.SupplierId,
-                        UnitPrice = product.UnitPrice,
-                        Discontinued = product.Discontinued
-                    };
+                    var productModel = product.GetProductModelFromProduct();
 
                     result.Data = productModel;
                 }
+            }
+            catch (ProductDataException proex)
+            {
+                result.Success = false;
+                result.Message = proex.Message;
+                _logger.LogError($"{result.Message}", proex.ToString());
             }
             catch (Exception ex)
             {
@@ -107,6 +102,12 @@ namespace Shop.BLL.Services
                 this._repository.Save(product);
                 result.Success = true;
                 result.Message = "El producto ha sido añadido correctamente";
+            }
+            catch (ProductDataException proex)
+            {
+                result.Success = false;
+                result.Message = proex.Message;
+                _logger.LogError($"{result.Message}", proex.ToString());
             }
             catch (Exception ex)
             {
@@ -137,6 +138,12 @@ namespace Shop.BLL.Services
                 result.Success = true;
                 result.Message = "El producto ha sido modificado correctamente";
             }
+            catch (ProductDataException proex)
+            {
+                result.Success = false;
+                result.Message = proex.Message;
+                _logger.LogError($"{result.Message}", proex.ToString());
+            }
             catch (Exception ex)
             {
                 result.Success = false;
@@ -163,6 +170,12 @@ namespace Shop.BLL.Services
 
                 result.Success = true;
                 result.Message = "El producto ha sido eliminado correctamente";
+            }
+            catch (ProductDataException proex)
+            {
+                result.Success = false;
+                result.Message = proex.Message;
+                _logger.LogError($"{result.Message}", proex.ToString());
             }
             catch (Exception ex)
             {

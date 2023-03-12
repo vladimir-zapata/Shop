@@ -7,7 +7,6 @@
 
   <ItemGroup>
     <Folder Include="Validations\" />
-    <Folder Include="Responses\" />
   </ItemGroup>
 
   <ItemGroup>

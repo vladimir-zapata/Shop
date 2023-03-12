@@ -20,9 +20,6 @@ namespace Shop.API.Controllers
         {
             var result = _productService.GetAll();
 
-            if(!result.Success) 
-                return BadRequest(result);
-
             return Ok(result);
         }
 
@@ -30,6 +27,7 @@ namespace Shop.API.Controllers
         public IActionResult GetById(int id)
         {
             var product = _productService.GetById(id);
+
             return Ok(product);
         }
 

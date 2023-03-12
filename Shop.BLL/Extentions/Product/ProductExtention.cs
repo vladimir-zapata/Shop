@@ -1,4 +1,5 @@
 ﻿using Shop.BLL.Dto;
+using Shop.BLL.Models;
 using Shop.DAL.Entities;
 using System;
 
@@ -21,20 +22,19 @@ namespace Shop.BLL.Extentions
             return product;
         }
 
-        public static Product GetProductFromUpdateDto(this UpdateProductDto updatedProduct)
+        public static ProductModel GetProductModelFromProduct(this Product product)
         {
-            Product product = new Product()
+            ProductModel pm = new ProductModel()
             {
-                ProductId = updatedProduct.ProductId,
-                ProductName = updatedProduct.ProductName,
-                UnitPrice = updatedProduct.UnitPrice,
-                CategoryId = updatedProduct.CategoryId,
-                SupplierId = updatedProduct.SupplierId,
-                ModifyUser = updatedProduct.RequestUser,
-                ModifyDate = DateTime.Now
+                ProductId = product.ProductId,
+                ProductName = product.ProductName,
+                CategoryId = product.CategoryId,
+                SupplierId = product.SupplierId,
+                UnitPrice = product.UnitPrice,
+                Discontinued = product.Discontinued
             };
 
-            return product;
+            return pm;
         }
     }
 }

@@ -5,11 +5,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Shop.BLL.Contract;
-using Shop.BLL.Services;
 using Shop.DAL.Context;
-using Shop.DAL.Interfaces;
-using Shop.DAL.Repositories;
+using Shop.API.Dependencies;
 
 namespace Shop.API
 {
@@ -28,11 +25,8 @@ namespace Shop.API
             //Context
             services.AddDbContext<ShopContext>(options => options.UseSqlServer(this.Configuration.GetConnectionString("ShopContext")));
 
-            //Repositories
-            services.AddScoped<IProductRepository, ProductRepository>();
-
-            //Services
-            services.AddScoped<IProductService, ProductService>();
+            //Dependencies
+            services.AddProductDependencies();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

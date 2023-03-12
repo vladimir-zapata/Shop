@@ -2,6 +2,7 @@
 using Shop.DAL.Context;
 using Shop.DAL.Core;
 using Shop.DAL.Entities;
+using Shop.DAL.Exceptions;
 using Shop.DAL.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,19 +20,27 @@ namespace Shop.DAL.Repositories
 
         public override List<Product> GetEntities() 
         {
-            List<Product> products = this._shopContext.Products.Where(pro => !pro.Deleted).ToList(); 
-            return products;
+            try
+            {
+                List<Product> products = this._shopContext.Products.Where(pro => !pro.Deleted).ToList();
+                return products;
+            }
+            catch (ProductDataException)
+            {
+                throw new ProductDataException("Ha ocurrido un error al listar los productos");
+            }
         }
 
         public override Product GetEntity(int id)
         {
-            return this._shopContext.Products.FirstOrDefault(pro => pro.ProductId == id && !pro.Deleted);
-        }
-
-        public override void Update(Product entity)
-        {
-            base.Update(entity);
-            base.SaveChanges();
+            try
+            {
+                return this._shopContext.Products.FirstOrDefault(pro => pro.ProductId == id && !pro.Deleted);
+            }
+            catch (ProductDataException)
+            {
+                throw new ProductDataException("Ha ocurrido un error al obtener el producto");
+            }
         }
     }
 }
