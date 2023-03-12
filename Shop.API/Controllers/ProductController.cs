@@ -42,9 +42,6 @@ namespace Shop.API.Controllers
         [HttpPost("UpdateProduct")]
         public IActionResult ModifyProduct([FromBody] UpdateProductDto product)
         {
-            if (product.ProductId == 0) return BadRequest();
-            if (product.RequestUser == 0) return BadRequest();
-
             var result = _productService.UpdateProduct(product);
 
             return Ok(result);

@@ -14,11 +14,13 @@ namespace Shop.BLL.Services
     public class ProductService : IProductService
     {
         private readonly IProductRepository _repository;
+        private readonly IProductValidation _validator;
         private readonly ILogger _logger;
 
-        public ProductService(IProductRepository repository, ILogger<IProductRepository> logger)
+        public ProductService(IProductRepository repository, IProductValidation validator, ILogger<IProductRepository> logger)
         {
             _repository = repository;
+            _validator = validator;
             this._logger = logger;
         }
 
@@ -57,6 +59,10 @@ namespace Shop.BLL.Services
         {
             ServiceResult result = new ServiceResult();
 
+            var isValidId = _validator.ValidateGetProductById(id);
+
+            if(isValidId != null) return isValidId;
+
             try
             {
                 _logger.LogInformation($"Consultando producto con id {id}");
@@ -91,14 +97,18 @@ namespace Shop.BLL.Services
             return result;
         }
 
-        public ServiceResult SaveProduct(SaveProductDto savedProduct)
+        public ServiceResult SaveProduct(SaveProductDto productToSave)
         {
             ServiceResult result = new ServiceResult();
 
+            Product product = productToSave.GetProductFromSaveProductDto();
+
+            var isValidProductToSave = _validator.ValidateProductToSave(product);
+
+            if (isValidProductToSave != null) return isValidProductToSave;
+
             try
             {
-                Product product = savedProduct.GetProductFromSaveDto();
-
                 this._repository.Save(product);
                 result.Success = true;
                 result.Message = "El producto ha sido añadido correctamente";
@@ -123,6 +133,12 @@ namespace Shop.BLL.Services
         {
             ServiceResult result = new ServiceResult();
 
+            var pro = updatedProduct.GetProductFromUpdateProductDto();
+
+            var isValidProductToModify = _validator.ValidateProductToUpdate(pro);
+
+            if (isValidProductToModify != null) return isValidProductToModify;
+
             try
             {
                 Product product = _repository.GetEntity(updatedProduct.ProductId);
@@ -133,6 +149,7 @@ namespace Shop.BLL.Services
                 product.SupplierId = updatedProduct.SupplierId;
                 product.ModifyUser = updatedProduct.RequestUser;
                 product.ModifyDate = DateTime.Now;
+                product.Discontinued= updatedProduct.Discontinued;
 
                 this._repository.Update(product);
                 result.Success = true;
@@ -157,6 +174,10 @@ namespace Shop.BLL.Services
         public ServiceResult DeleteProduct(DeleteProductDto deleteProduct)
         {
             ServiceResult result = new ServiceResult();
+
+            var isValidProductToDelete = _validator.ValidateProductToDelete(deleteProduct);
+
+            if (isValidProductToDelete != null) return isValidProductToDelete;
 
             try
             {
