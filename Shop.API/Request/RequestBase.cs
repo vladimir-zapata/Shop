@@ -1,5 +1,4 @@
-﻿using System;
-namespace Shop.API.Request
+﻿namespace Shop.API.Request
 {
     public abstract class RequestBase
     {

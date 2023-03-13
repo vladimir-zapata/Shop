@@ -9,7 +9,7 @@
             public string ContactTitle { get; set; }
             public string ContactName { get; set; }
             public int CustomerId { get; set; }
-            
+
         }
     }
 }

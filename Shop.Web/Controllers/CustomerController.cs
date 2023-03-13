@@ -10,7 +10,7 @@ namespace Shop.Web.Controllers
         // GET: CustomerController
         public ActionResult Index()
 
-         {
+        {
             List<CustomerModel> customer = new List<CustomerModel>()
             {
                 new CustomerModel()
@@ -27,7 +27,7 @@ namespace Shop.Web.Controllers
                     Country = "Republica Dominicana",
                     Phone = "809-967-4169",
                     Fax = "no aplica"
-                    
+
                 }
             };
 

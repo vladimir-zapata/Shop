@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.Extensions.Logging;
 using Shop.DAL.Context;
 using Shop.DAL.Entities;
 using Shop.DAL.Interfaces;
-using Microsoft.Extensions.Logging;
-using Shop.DAL.Core;
-using System.Xml.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Shop.DAL.Repository
 
@@ -41,11 +39,11 @@ namespace Shop.DAL.Repository
 
         public List<Customer> GetAll(string Customer)
         {
-        
+
             return this.context.Customers.Where(x => !x.Deleted).ToList();
         }
 
-         public Customer GetById(int id)
+        public Customer GetById(int id)
         {
             return context.Customers!.Find(id);
         }
@@ -103,11 +101,11 @@ namespace Shop.DAL.Repository
                     CompanyName = customer.CompanyName,
                     ContactName = customer.ContactName,
                     ContactTitle = customer.ContactTitle,
-                    
+
 
                 };
 
-                
+
                 this.context.SaveChanges();
 
             }
@@ -115,6 +113,21 @@ namespace Shop.DAL.Repository
             {
                 this.ilogger.LogError($"Error updating customer", ex.ToString());
             }
+        }
+
+        public IEnumerable<object> GetEntities()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Customer GetEntity(int customerId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Customer GetEntity(string customerId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

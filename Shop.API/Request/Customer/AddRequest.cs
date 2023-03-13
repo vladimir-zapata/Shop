@@ -2,7 +2,7 @@
 {
     public class AddRequest
     {
-        
+
 
         public class AddCustomerRequest : CustomerRequest { }
     }

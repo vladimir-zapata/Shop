@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
+using Shop.API.Request.Customer;
+using Shop.API.Response;
 using Shop.DAL.Entities;
 using Shop.DAL.Interfaces;
-using Shop.API.Response;
-using Shop.API.Request.Customer;
+using System.Collections.Generic;
 using static Shop.API.Request.Customer.AddRequest;
 
 namespace Shop.API.Controllers
@@ -32,7 +32,7 @@ namespace Shop.API.Controllers
                         new CustomerResponse()
                         {
                             CustomerId = customer.CustId,
-                            ContactName= customer.ContactName,
+                            ContactName = customer.ContactName,
                             ContactTitle = customer.ContactTitle,
                             CustomerName = customer.ContactName,
 
@@ -64,7 +64,7 @@ namespace Shop.API.Controllers
         {
             var customerToSave = new Customer()
             {
-           
+
 
             };
 
@@ -78,15 +78,14 @@ namespace Shop.API.Controllers
         {
             var customerToModify = new Customer()
             {
-
-
-            };
-
-            _CustomerRepository.Update(customerToModify);
-
+                this._CustomerRepository.Update(customer);
             return Ok();
+
+        
+
         }
 
+      
         [HttpPost("DeleteCustomer")]
         public IActionResult Delete([FromBody] DeletedRequest customer)
         {
