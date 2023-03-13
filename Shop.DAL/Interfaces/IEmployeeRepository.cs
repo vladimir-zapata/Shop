@@ -1,15 +1,16 @@
-﻿using Shop.DAL.Entities;
+﻿using Shop.DAL.Core;
+using Shop.DAL.Entities;
 using System.Collections.Generic;
+using Employee = Shop.DAL.Entities.Employee;
 
 namespace Shop.DAL.Interfaces
 {
     public interface IEmployeeRepository
     {
-        void Save(Employee employee);
-        void Update(Employee employee);
-        void Remove(Employee employee);
-        public Employee GetById(int id);
-        List<Employee> GetAll();
-        bool Exists(string name);
+        object GetEntities();
+        Shop.BLL.Dtos.EmployeeDto GetEntity(object empid);
+        void update(Shop.BLL.Dtos.EmployeeDto employee);
+
+        public interface IEmployeeRepository : IRepositoryBase<Employee> { }
     }
 }

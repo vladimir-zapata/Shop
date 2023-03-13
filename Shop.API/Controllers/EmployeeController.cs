@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Shop.API.Request.Employee;
 using Shop.API.Responses;
 using Shop.DAL.Entities;
 using Shop.DAL.Interfaces;
+using Shop.DAL.Repositories;
 using System.Collections.Generic;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -19,41 +21,46 @@ namespace Shop.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+
+        public IActionResult GetAll() 
         {
-            List<Employee> employeeList= new List<Employee>();
+            var result = this._employeeRepository.GetAll();
 
-            var users = this._employeeRepository.GetAll();
-
-            return Ok(users);
+            if (!result.success)
+                return BadRequest(result);
+                return Ok(result);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("empid")]
         public IActionResult GetById(int id)
         {
-            var user = this._employeeRepository.GetById(id);
-            return Ok(user);
+            var employee = _employeeRepository.GetById(id);
+            return Ok(employee);
         }
 
-        [HttpPost("SaveEmployee")]
-        public IActionResult Save([FromBody] Employee emp)
+        [HttpPost("CreateEmployee")]
+        public IActionResult createEmployee([FromBody] SaveEmployeeDto employee)
         {
-            this._employeeRepository.Save(emp);
-            return Ok();
+            var result = _employeeRepository.SaveEmployee(employee);
+            return Ok(result);
         }
 
-        [HttpPut("UpdateEmployee")]
-        public IActionResult Update([FromBody] Employee emp)
+        [HttpPost("UpdateEmployee")]
+        public IActionResult ModifiyEmployee([FromBody] UpdateEmployeeDto employee)
         {
-            this._employeeRepository.Update(emp);
-            return Ok();
+            if (employee.Employeeid == 0) return BadRequest();
+            if (employee.Employeeid == 0) return BadRequest();
+
+            var result = _employeeRepository.UpdateEmployee(employee);
+            return Ok(result);
         }
 
-        [HttpDelete("DeleteEmployee")]
-        public IActionResult Delete(Employee emp)
+        [HttpPost("DeleteProdcut")]
+        public IActionResult Delete([FromBody] DeleteEmployeeDto employee)
         {
-            this._employeeRepository.Remove(emp);
-            return Ok();
+            var result = _employeeRepository.DeleteEmployee(employee);
+            return Ok(result);
+
         }
     }
 }
