@@ -8,6 +8,8 @@ using Microsoft.OpenApi.Models;
 using Shop.DAL.Context;
 using Shop.DAL.Interfaces;
 using Shop.DAL.Repositories;
+using Shop.BLL.Services;
+using Shop.BLL.Contract;
 
 namespace Shop.API
 {
@@ -28,8 +30,10 @@ namespace Shop.API
             //Repositories
             services.AddScoped<IUserRepository, UserRepository>();
 
-            services.AddControllers();
+            //Services
+            services.AddScoped<IUserService, UserService>();
 
+            services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Shop.API", Version = "v1" });

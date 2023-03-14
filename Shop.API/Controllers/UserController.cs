@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Shop.API.Request.Users;
 using Shop.API.Response.User;
+using Shop.BLL.Contract;
+using Shop.BLL.Dtos;
 using Shop.DAL.Entities;
-using Shop.DAL.Interfaces;
 using System.Collections.Generic;
+using TechTalk.SpecFlow.CommonModels;
+
 
 namespace Shop.API.Controllers
 {
@@ -11,11 +14,13 @@ namespace Shop.API.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IUserRepository _userRepository;
 
-        public UserController(IUserRepository userRepository)
+        private readonly IUserService _userService;
+       
+
+        public UserController(IUserService userService)
         {
-            this._userRepository = userRepository;
+            this._userService = userService;
         }
 
         [HttpGet]
@@ -23,70 +28,43 @@ namespace Shop.API.Controllers
         {
             List<UserResponse> userList = new List<UserResponse>();
 
-            var users = _userRepository.GetEntities();
+            var users = _userService.GetAll();
 
-            users.ForEach(user => userList.Add(new UserResponse()
-            {
-                Name = user.Name,
-                Email = user.Email,
-            }));
-
-            return Ok(userList);
+            return Ok(users);
         }
 
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            var user = _userRepository.GetEntity(id);
+            var user = _userService.GetById(id);
 
             if (user == null) return NotFound();
 
-            return Ok(new UserResponse() { Name = user.Name, Email = user.Email });
+            return Ok(user);
         }
 
         [HttpPost("SaveUser")]
-        public IActionResult Save([FromBody] AddUserRequest userRequest)
+        public IActionResult Save([FromBody] UserAddDtos userRequest)
         {
-            var user = new User()
-            {
-                Email = userRequest.Email,
-                Password = userRequest.Password,
-                Name = userRequest.Name,
-                CreationUser = userRequest.CreationUser
-            };
+            var result = this._userService.SaveUser(userRequest);
 
-            this._userRepository.Save(user);
-            return Ok();
+            return Ok(result);
         }
 
-        [HttpPut("UpdateUser")]
-        public IActionResult Update([FromBody] UpdateUserRequest userUpdate)
+        [HttpPost("UpdateUser")]
+        public IActionResult Update([FromBody] UserUpdateDtos userUpdate)
         {
-            var user = new User()
-            {
-                UserId = userUpdate.UserId,
-                Email = userUpdate.Email,
-                Password = userUpdate.Password,
-                Name = userUpdate.Name,
-                ModifyUser = userUpdate.ModifyUser
-            };
+            var result = this._userService.UpdateUser(userUpdate);
 
-            this._userRepository.Update(user);
-            return Ok();
+            return Ok(result);
         }
 
-        [HttpDelete("DeleteUser")]
-        public IActionResult Delete([FromBody] DeleteUserRequest userDelete)
+        [HttpPost("DeleteUser")]
+        public IActionResult Delete([FromBody] UserRemoveDtos userDelete)
         {
-            var user = new User()
-            {
-                UserId = userDelete.UserId,
-                DeleteUser = userDelete.DeleteUser
-            };
+            var result = this._userService.RemoveUser(userDelete);
 
-            this._userRepository.Remove(user);
-
-            return Ok();
+            return Ok(result);
         }
     }
 }

@@ -3,6 +3,6 @@ using Shop.DAL.Entities;
 
 namespace Shop.DAL.Interfaces
 {
-    public interface IUserRepository : IRepositoryBase<User> { }
-       
-    }
+    public interface IUserRepository : IRepositoryBase<User> {}
+
+}

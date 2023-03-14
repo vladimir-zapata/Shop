@@ -31,18 +31,22 @@ namespace Shop.DAL.Core
         public virtual void Remove(TEntity entity)
         {
            this.entities.Remove(entity);
+            this.SaveChanges();
         }
         public virtual void Remove(TEntity[] entities)
         {
             this.entities.RemoveRange(entities);
+            this.SaveChanges();
         }
         public virtual void Save(TEntity entity)
         {
            this.entities.Add(entity);
+            this.SaveChanges();
         }
         public virtual void Save(TEntity[] entities)
         {
            this.entities.AddRange(entities);
+            this.SaveChanges();
         }
         public virtual void SaveChanges()
         {
@@ -51,10 +55,12 @@ namespace Shop.DAL.Core
         public virtual void Update(TEntity entity)
         {
            this.entities.Update(entity);
+            this.SaveChanges();
         }
         public virtual void Update(TEntity[] entities)
         {
-           this.entities.UpdateRange(entities);    
+           this.entities.UpdateRange(entities);
+            this.SaveChanges();
         }
     }
 }

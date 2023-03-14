@@ -6,7 +6,7 @@ using Shop.DAL.Interfaces;
 
 namespace Shop.DAL.Repositories
 {
-    public class UserRepository : Core.RepositoryBase<User>, IUserRepository
+    public class UserRepository : RepositoryBase<User>, IUserRepository
     {
         private readonly ShopContext shopContext;
         private readonly ILogger ilogger;
