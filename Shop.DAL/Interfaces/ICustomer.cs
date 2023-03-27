@@ -1,17 +1,14 @@
-﻿using Shop.DAL.Entities;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Shop.DAL.Entities;
+using Shop.DAL.Model;
 
 namespace Shop.DAL.Interfaces
 {
     public interface ICustomer
     {
-
-        void Save(Customer customer);
-        void Update(Customer customer);
-        void Remove(Customer customer);
-        Customer GetById(int id);
-        List<Customer> GetAll();
-        bool Exists(string companyname);
-
+        public interface ICustomerRepository : Core.IRepositoryBase<Customer> 
+        {
+            
+        }
     }
 }

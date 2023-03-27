@@ -18,7 +18,12 @@ namespace Shop.BLL.Services
     public class CustomerService : ICustomerService
     {
         private readonly CustomerRepository customerRepository;
-        private readonly ILogger<CustomerService> logger;
+        private readonly ILogger<CustomerService>? logger;
+        
+
+
+        private object _repository;
+        +
 
         public object CustomerRepository { get; private set; }
 
@@ -28,34 +33,39 @@ namespace Shop.BLL.Services
             this.customerRepository = (CustomerRepository?)customerRepository;
             this.logger = logger;
         }
+
+  
         public ServiceResult GetAll()
         {
+            
             ServiceResult result = new ServiceResult();
 
             try
             {
-                var customer = this.customerRepository.GetEntities().Select(cd => new CustomerResultModel()
-                {
-                    //CreationDate = cd.CreationDate,
-                    //EnrollmentDate = cd.EnrollmentDate.Value,
-                    //CustomerName = cd.CustomerName,
-                    //ContactName = cd.ContactName,
-                    //CustomerId = cd.Id
-                }).ToList();
+                logger.LogInformation("Consultando clientes");
+
+                var customer = _repository
+                                   .GetEntities()
+                                   .Select(x => x.GetCustomerModelFromCustomer())
+                                   .ToList();
 
                 result.Data = customer;
-                result.Success = true;
+            }
+            catch (CustomerDataException proex)
+            {
+                result.Success = false;
+                result.Message = proex.Message;
+                logger.LogError($"{result.Message}", proex.ToString());
             }
             catch (Exception ex)
             {
-                result.Message = "Ocurrió un error obteniendo los estudiantes";
                 result.Success = false;
-                this.logger.LogError($" {result.Message} ", ex.ToString());
+                result.Message = "Error obteniendo los clientes";
+                logger.LogError($"{result.Message}", ex.ToString());
             }
 
             return result;
         }
-
         public ServiceResult GetById(int Id)
         {
             ServiceResult result = new ServiceResult();
@@ -184,9 +194,10 @@ namespace Shop.BLL.Services
             return result;
         }
 
-   
-
-
+        ServiceResult ICustomerService.UpdateCustomer(CustomerUpdateDto updateDto)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 

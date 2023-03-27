@@ -1,103 +1,80 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Shop.API.Request.Customer;
-using Shop.API.Response;
-using Shop.DAL.Entities;
-using Shop.DAL.Interfaces;
-using System.Collections.Generic;
-using static Shop.API.Request.Customer.AddRequest;
+﻿using Shop.BLL.Dtos;
+using Shop.BLL.Contract;
+using Microsoft.AspNetCore.Mvc;
 
-namespace Shop.API.Controllers
+
+namespace itlapr.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomerController : ControllerBase
+    public class CustomerController: ControllerBase
     {
-        private readonly ICustomer _CustomerRepository;
+        private  readonly ICustomerService _customerService;
 
-        public CustomerController(ICustomer customerRepository)
+        public CustomerController(ICustomerService customerService)
         {
-            this._CustomerRepository = customerRepository;
+            this._customerService = customerService;
         }
-
+        
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult Get()
         {
-            List<CustomerResponse> customers = new List<CustomerResponse>();
+            var result = this._customerService.GetAll();
 
-            var customersFromDB = _CustomerRepository.GetAll();
+            if (result.Success)
+                return Ok(result);
+            else
+                return BadRequest(result);
 
-            if (customersFromDB == null) return NotFound("No customer found");
 
-            customersFromDB.ForEach(customer => customers.Add(
-                        new CustomerResponse()
-                        {
-                            CustomerId = customer.CustId,
-                            ContactName = customer.ContactName,
-                            ContactTitle = customer.ContactTitle,
-                            CustomerName = customer.ContactName,
-
-                        }
-                  )); ;
-
-            return Ok(customers);
         }
-
-        [HttpGet("{id}")]
-        public IActionResult GetById(int id)
-        {
-            var customer = _CustomerRepository.GetById(id);
-
-            if (customer == null) return NotFound("User not found");
-
-            return Ok(new CustomerResponse()
-            {
-                CustomerId = customer.CustId,
-                ContactName = customer.ContactName,
-                ContactTitle = customer.ContactTitle,
-                CustomerName = customer.ContactName,
-
-            });
-        }
-
-        [HttpPost("CreateCustomer")]
-        public IActionResult CreateCustomer([FromBody] AddCustomerRequest customer)
-        {
-            var customerToSave = new Customer()
-            {
-
-
-            };
-
-            _CustomerRepository.Save(customerToSave);
-
-            return Ok();
-        }
-
-        [HttpPost("UpdateCustomer")]
-        public IActionResult ModifyCustomer([FromBody] ModifyRequest customer)
-        {
-            var customerToModify = new Customer()
-            {
-                this._CustomerRepository.Update(customer);
-            return Ok();
 
         
+        [HttpGet("{id}")]
+        public IActionResult Get(int id)
+        {
+            var result = this._customerService.GetById(id);
 
+            if (result.Success)
+                return Ok(result);
+            else
+                return BadRequest(result);
         }
 
-      
-        [HttpPost("DeleteCustomer")]
-        public IActionResult Delete([FromBody] DeletedRequest customer)
+        // POST api/<StudentController>
+        [HttpPost("SaveCustomer")]
+        public IActionResult Post([FromBody] CustomerSaveDto customerSaveDto)
         {
-            var customerToRemove = new Customer()
-            {
-                CustId = customer.CustId,
-                DeleteUser = customer.RequestUser
-            };
+            var result = this._customerService.SaveCustomer(customerSaveDto);
 
-            _CustomerRepository.Remove(customerToRemove);
+            if (result.Success)
+                return Ok(result);
+            else
+                return BadRequest(result);
+        }
 
-            return NoContent();
+        // POST api/<StudentController>
+        [HttpPost("UpdateCustomer")]
+        public IActionResult Put([FromBody] CustomerUpdateDto customerUpdateDto)
+        {
+            var result = this._customerService.UpdateCustomer(customerUpdateDto);
+
+            if (result.Success)
+                return Ok(result);
+            else
+                return BadRequest(result);
+        }
+      
+        [HttpPost("RemoveCustomer")]
+        public IActionResult Remove([FromBody] CustomerRemoveDto customerRemoveDto)
+        {
+            var result = this._customerService.RemoveCustomer(customerRemoveDto);
+
+            if (result.Success)
+                return Ok(result);
+            else
+                return BadRequest(result);
         }
     }
 }
+

@@ -3,7 +3,7 @@
 
 namespace Shop.BLL.Dtos
 {
-    internal class CustomerUpdateDto
+    public class CustomerUpdateDto
     {
         public string CustomerId { get; set; }
         public string CompanyName { get; set; }
