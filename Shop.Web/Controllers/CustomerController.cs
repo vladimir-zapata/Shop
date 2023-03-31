@@ -2,59 +2,129 @@
 using Microsoft.AspNetCore.Mvc;
 using Shop.Web.Models;
 using System.Collections.Generic;
+using Shop.Web.Models.Request;
+using Shop.Web.Models.Responses;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using System;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Shop.Web.Controllers
 {
     public class CustomerController : Controller
     {
-        // GET: CustomerController
-        public ActionResult Index()
+       
+        HttpClientHandler httpClientHandler = new HttpClientHandler();
+        private readonly ILogger<CustomerController> logger;
+        private readonly IConfiguration configuration;
 
+        public CustomerController(ILogger<CustomerController> logger,
+                                 IConfiguration configuration)
         {
-            List<CustomerModel> customer = new List<CustomerModel>()
+            this.logger = logger;
+            this.configuration = configuration;
+        }
+        public async Task<ActionResult> Index()
+        {
+            CustomerListResponse customerListResponse = new CustomerListResponse();
+
+            try
             {
-                new CustomerModel()
+                using (var httpClient = new HttpClient(this.httpClientHandler))
                 {
-                    CustId = 1,
-                    CompanyName = "Bravo",
-                    ContactName = "Carolina Herrara",
-                    ContactTittle = "Admin",
-                    Address = "Calle A, Piantiani Edif Andrea 1 Apto 2B",
-                    Email = "bravo@gmail.com",
-                    City = "Santo Domingo",
-                    Region = "Norte",
-                    PostalCode = "241",
-                    Country = "Republica Dominicana",
-                    Phone = "809-967-4169",
-                    Fax = "no aplica"
+                    var response = await httpClient.GetAsync("http://localhost:51810/api/Customer");
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string apiResponse = await response.Content.ReadAsStringAsync();
+                        customerListResponse = JsonConvert.DeserializeObject<CustomerListResponse>(apiResponse);
+                    }
+                    else
+                    {
+                        // completar //       
+                    }
+
 
                 }
-            };
 
+                return View(customerListResponse.data);
 
-            return View(customer);
-        }
-
-        // GET: CustomerController/Details/5
-        public ActionResult Details(int id)
-        {
+            }
+            catch (Exception ex)
+            {
+                this.logger.LogError("Error obteniendo los clientes", ex.ToString());
+            }
             return View();
         }
 
-        // GET: CustomerController/Create
+
+        public async Task<ActionResult> Details(int id)
+        {
+
+            CustomerResponse customerResponse = new CustomerResponse();
+
+            using (var httpClient = new HttpClient(this.httpClientHandler))
+            {
+
+                var response = await httpClient.GetAsync($"http://localhost:51810/api/Customer/" + id);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string apiResponse = await response.Content.ReadAsStringAsync();
+                    customerResponse = JsonConvert.DeserializeObject<CustomerResponse>(apiResponse);
+                }
+                else
+                {
+                    // realizar x logica //       
+                }
+
+
+            }
+
+            return View(customerResponse.data);
+        }
+
+
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: CustomerController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create(CustomerCreateRequest customerCreate)
         {
+            BaseResponse baseResponse = new BaseResponse();
             try
             {
-                return RedirectToAction(nameof(Index));
+                customerCreate.creationDate = DateTime.Now;
+                customerCreate.creationUser = 1;
+                using (var httpClient = new HttpClient(this.httpClientHandler))
+                {
+                    StringContent content = new StringContent(JsonConvert.SerializeObject(customerCreate), Encoding.UTF8, "application/json");
+
+                    var response = await httpClient.PostAsync("http://localhost:51810/api/Student/SaveCustomer", content);
+
+                    string apiResponse = await response.Content.ReadAsStringAsync();
+
+                    baseResponse = JsonConvert.DeserializeObject<BaseResponse>(apiResponse);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        ViewBag.Message = baseResponse.Message;
+                        return View();
+                    }
+
+                }
+
+
             }
             catch
             {
@@ -62,41 +132,66 @@ namespace Shop.Web.Controllers
             }
         }
 
-        // GET: CustomerController/Edit/5
-        public ActionResult Edit(int id)
+        // GET: StudnetController/Edit/5
+        public async Task<ActionResult> Edit(int id)
         {
-            return View();
+
+            CustomerResponse customerResponse = new CustomerResponse();
+
+            using (var httpClient = new HttpClient(this.httpClientHandler))
+            {
+
+                var response = await httpClient.GetAsync($"http://localhost:51810/api/Customer/" + id);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string apiResponse = await response.Content.ReadAsStringAsync();
+                    customerResponse = JsonConvert.DeserializeObject<CustomerResponse>(apiResponse);
+                }
+                else
+                {
+                    // completar //       
+                }
+
+
+            }
+            return View(customerResponse.data);
+
         }
 
         // POST: CustomerController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(CustomerUpdateRequest customerUpdate)
         {
+            BaseResponse baseResponse = new BaseResponse();
             try
             {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+                customerUpdate.modifyDate = DateTime.Now;
+                customerUpdate.modifyUser = 1;
+                using (var httpClient = new HttpClient(this.httpClientHandler))
+                {
+                    StringContent content = new StringContent(JsonConvert.SerializeObject(customerUpdate), Encoding.UTF8, "application/json");
 
-        // GET: CustomerController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
+                    var response = await httpClient.PostAsync("http://localhost:51810/api/Student/UpdateCustomer", content);
 
-        // POST: CustomerController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
+                    string apiResponse = await response.Content.ReadAsStringAsync();
+
+                    baseResponse = JsonConvert.DeserializeObject<BaseResponse>(apiResponse);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        ViewBag.Message = baseResponse.Message;
+                        return View();
+                    }
+
+                }
+
+
             }
             catch
             {

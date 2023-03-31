@@ -35,5 +35,10 @@ namespace Shop.DAL.Repository
             return this._shopContext.Customers.Count(cd => cd.CompanyName == name) > 1;
             
         }
+
+        public Customer GetEntity(string customerId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

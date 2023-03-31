@@ -1,4 +1,6 @@
-﻿namespace Shop.Web.Models
+﻿using System;
+
+namespace Shop.Web.Models
 {
     public class CustomerModel
     {
@@ -16,6 +18,8 @@
         public string Phone { get; set; }
         public string Fax { get; set; }
 
+        public DateTime EnrollmentDate { get; set; }
+        public string CreationDateDisplay { get; set; }
 
 
 

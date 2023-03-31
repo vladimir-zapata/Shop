@@ -1,5 +1,6 @@
-﻿using Shop.BLL.Contract;
+﻿using Shop.BLL.Logger;
 using Shop.BLL.Core;
+using Shop.BLL.Contract;
 using Shop.BLL.Dtos;
 using Shop.BLL.Models;
 using Shop.DAL.Entities;
@@ -13,59 +14,48 @@ using System.Resources;
 using Shop.DAL.Repository;
 using System.Runtime.Serialization;
 
-namespace Shop.BLL.Services
+
+namespace shop.BLL.Services
 {
     public class CustomerService : ICustomerService
     {
         private readonly CustomerRepository customerRepository;
-        private readonly ILogger<CustomerService>? logger;
-        
+        private readonly ILogger<CustomerService> logger;
 
-
-        private object _repository;
-        +
-
-        public object CustomerRepository { get; private set; }
-
-        public CustomerService(ICustomer customerRepository,
+        public CustomerService(CustomerRepository customerRepository,
                               ILogger<CustomerService> logger)
         {
-            this.customerRepository = (CustomerRepository?)customerRepository;
+            this.customerRepository = customerRepository;
             this.logger = logger;
         }
-
-  
         public ServiceResult GetAll()
         {
-            
             ServiceResult result = new ServiceResult();
 
             try
             {
-                logger.LogInformation("Consultando clientes");
+                var customers = this.customerRepository.GetEntities().Select(cd => new CustomerResultModel()
+                {
+                    CreationDate = cd.CreationDate,
+                    EnrollmentDate = cd.EnrollmentDate.Value,
+                    CompanyName = cd.CompanyName,
+                    ContactName = cd.ContactName,
+                    CustomerId = cd.Id
+                }).ToList();
 
-                var customer = _repository
-                                   .GetEntities()
-                                   .Select(x => x.GetCustomerModelFromCustomer())
-                                   .ToList();
-
-                result.Data = customer;
-            }
-            catch (CustomerDataException proex)
-            {
-                result.Success = false;
-                result.Message = proex.Message;
-                logger.LogError($"{result.Message}", proex.ToString());
+                result.Data = customers;
+                result.Success = true;
             }
             catch (Exception ex)
             {
+                result.Message = "Ocurrió un error obteniendo los clientes";
                 result.Success = false;
-                result.Message = "Error obteniendo los clientes";
-                logger.LogError($"{result.Message}", ex.ToString());
+                this.logger.LogError($" {result.Message} ", ex.ToString());
             }
 
             return result;
         }
+
         public ServiceResult GetById(int Id)
         {
             ServiceResult result = new ServiceResult();
@@ -76,12 +66,11 @@ namespace Shop.BLL.Services
 
                 CustomerResultModel customerResultModel = new CustomerResultModel()
                 {
-                    CreationDate = (DateTime)customer.CreationDate,
+                    CreationDate = customer.CreationDate,
                     EnrollmentDate = customer.EnrollmentDate.Value,
-                    CustomerName = customer.CustomerName,
+                    CompanyName = customer.CompanyName,
                     ContactName = customer.ContactName,
                     CustomerId = customer.Id
-
                 };
 
                 result.Data = customerResultModel;
@@ -97,9 +86,7 @@ namespace Shop.BLL.Services
             return result;
         }
 
-     
-
-        public ServiceResult RemoveCustomer (CustomerRemoveDto removeDto)
+        public ServiceResult RemoveCustomer(CustomerRemoveDto removeDto)
         {
             ServiceResult result = new ServiceResult();
 
@@ -128,11 +115,8 @@ namespace Shop.BLL.Services
 
         public ServiceResult SaveCustomer(CustomerSaveDto saveDto)
         {
-            throw new NotImplementedException();
-        }
 
-        public ServiceResult CustomerSave(CustomerSaveDto saveDto)
-        {
+            this.logger.LogInformation("Paso por aqui", saveDto.CompanyName);
             ServiceResult result = new ServiceResult();
 
             if (string.IsNullOrEmpty(saveDto.CompanyName))
@@ -142,7 +126,7 @@ namespace Shop.BLL.Services
                 return result;
             }
 
-            if (saveDto.ContactName.Length > 50)
+            if (saveDto.CompanyName.Length > 50)
             {
                 result.Success = false;
                 result.Message = "La logitud del nombre es inválida";
@@ -152,20 +136,20 @@ namespace Shop.BLL.Services
             if (string.IsNullOrEmpty(saveDto.ContactName))
             {
                 result.Success = false;
-                result.Message = "El nombre del contato es requerido";
+                result.Message = "El contacto es requerido";
                 return result;
             }
             if (saveDto.CompanyName.Length > 50)
             {
                 result.Success = false;
-                result.Message = "La logintud del nombre del contato es inválida";
+                result.Message = "La logintud del contacto es inválida";
                 return result;
             }
 
             if (!saveDto.EnrollmentDate.HasValue)
             {
                 result.Success = false;
-                result.Message = "La fecha de inscripción es requerida.";
+                result.Message = "La fecha de inicio es requerida.";
                 return result;
 
             }
@@ -177,8 +161,11 @@ namespace Shop.BLL.Services
                 result.Success = true;
                 result.Message = "El cliente ha sido agregado correctamente.";
 
+                this.logger.LogInformation(result.Message, result);
+
+
             }
-            catch (CustomerDataException sdex)
+            catch (CustomerException sdex)
             {
                 result.Message = sdex.Message;
                 result.Success = false;
@@ -189,35 +176,80 @@ namespace Shop.BLL.Services
                 result.Message = "Ocurrió un error agregando el cliente";
                 result.Success = false;
                 this.logger.LogError($" {result.Message} ", ex.ToString());
+
             }
 
             return result;
         }
 
-        ServiceResult ICustomerService.UpdateCustomer(CustomerUpdateDto updateDto)
+        public ServiceResult UpdateCustomer(CustomerUpdateDto updateDto)
         {
-            throw new NotImplementedException();
-        }
-    }
-}
+            ServiceResult result = new ServiceResult();
 
-namespace Shop.BLL
-{
-    [Serializable]
-    class CustomerDataException : Exception
-    {
-     
+            try
+            {
 
-        public CustomerDataException(string message) : base(message)
-        {
-        }
+                if (string.IsNullOrEmpty(updateDto.CompanyName))
+                {
+                    result.Success = false;
+                    result.Message = "El nombre es requerido";
+                    return result;
+                }
 
-        public CustomerDataException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
+                if (updateDto.CompanyName.Length > 50)
+                {
+                    result.Success = false;
+                    result.Message = "La logitud del nombre es inválida";
+                    return result;
+                }
 
-        protected CustomerDataException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
+                if (string.IsNullOrEmpty(updateDto.ContactName))
+                {
+                    result.Success = false;
+                    result.Message = "El contacto es requerido";
+                    return result;
+                }
+                if (updateDto.CompanyName.Length > 50)
+                {
+                    result.Success = false;
+                    result.Message = "La logintud del contacto es inválida";
+                    return result;
+                }
+
+                if (!updateDto.EnrollmentDate.HasValue)
+                {
+                    result.Success = false;
+                    result.Message = "La fecha de inicio es requerida.";
+                    return result;
+
+                }
+
+                Customer customer = this.customerRepository.GetEntity(updateDto.CustomerId);
+                customer.ModifyDate = updateDto.ModifyDate;
+                customer.UserMod = updateDto.ModifyUser;
+                customer.CompanyName = updateDto.CompanyName;
+                customer.ContactName = updateDto.ContactName;
+                customer.EnrollmentDate = updateDto.EnrollmentDate;
+
+                this.customerRepository.Update(customer);
+                result.Success = true;
+                result.Message = "El cliente ha sido actualizado correctamente.";
+
+            }
+            catch (CustomerException sdex)
+            {
+                result.Message = sdex.Message;
+                result.Success = false;
+                this.logger.LogError(result.Message, sdex.ToString());
+            }
+            catch (Exception ex)
+            {
+
+                result.Message = "Ocurrió un error actualizando el cliente";
+                result.Success = false;
+                this.logger.LogError($" {result.Message} ", ex.ToString());
+            }
+            return result;
         }
     }
 }
