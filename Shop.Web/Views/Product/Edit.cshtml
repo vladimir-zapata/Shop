@@ -1,0 +1,72 @@
+﻿@model Shop.Web.Models.ProductModel
+
+@{
+    ViewData["Title"] = "Editar producto";
+}
+
+<h1>Editar</h1>
+<hr />
+
+@if (ViewBag.Message != null && ViewBag.Success)
+{
+    <div class="text-success">
+        @ViewBag.Message
+    </div>
+}
+
+@if (ViewBag.Message != null && !ViewBag.Success)
+{
+    <div class="text-danger">
+        @ViewBag.Message
+    </div>
+}
+<br>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div hidden class="form-group">
+                <input asp-for="ProductId" class="form-control" value="@Model.ProductId"/>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProductName" class="control-label font-weight-bold">Nombre</label>
+                <input asp-for="ProductName" class="form-control" value="@Model.ProductName" />
+                <span asp-validation-for="ProductName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SupplierId" class="control-label font-weight-bold">Suplidor</label>
+                <input asp-for="SupplierId" class="form-control" value="@Model.SupplierId" />
+                <span asp-validation-for="SupplierId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CategoryId" class="control-label font-weight-bold">Categoría</label>
+                <input asp-for="CategoryId" class="form-control" value="@Model.CategoryId" />
+                <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UnitPrice" class="control-label font-weight-bold">Precio</label>
+                <input asp-for="UnitPrice" class="form-control" value="@Model.UnitPrice" />
+                <span asp-validation-for="UnitPrice" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label font-weight-bold">
+                    <input class="form-check-input" asp-for="Discontinued" value="@Model.Discontinued" /> Descontinuado
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Guardar" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Volver a la lista</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

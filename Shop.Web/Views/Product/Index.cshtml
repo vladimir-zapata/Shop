@@ -1,34 +1,28 @@
 ﻿@model IEnumerable<Shop.Web.Models.ProductModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Productos";
 }
 
-<h1>Products</h1>
+<h1>Productos</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Crear nuevo</a>
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.ProductId)
+                Producto
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ProductName)
+                Precio
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.SupplierId)
+                Categoría
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CategoryId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UnitPrice)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Discontinued)
+                Descontinuado
             </th>
             <th></th>
         </tr>
@@ -37,27 +31,21 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.ProductId)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.ProductName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SupplierId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CategoryId)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UnitPrice)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.CategoryId)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.Discontinued)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                    @Html.ActionLink("Editar", "Edit", new { id = item.ProductId }) |
+                    @Html.ActionLink("Detalles", "Details", new { id = item.ProductId }) |
+                    @Html.ActionLink("Borrar", "Delete", new { id = item.ProductId })
             </td>
         </tr>
 }
