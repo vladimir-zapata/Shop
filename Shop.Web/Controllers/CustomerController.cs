@@ -11,6 +11,9 @@ using System;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Routing;
+using System.Reflection.Metadata;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Shop.Web.Controllers
 {
@@ -35,7 +38,8 @@ namespace Shop.Web.Controllers
             {
                 using (var httpClient = new HttpClient(this.httpClientHandler))
                 {
-                    var response = await httpClient.GetAsync("http://localhost:51810/api/Customer");
+                    var response = await httpClient.GetAsync("http://localhost:31881/swagger/index.html");
+                   
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -69,7 +73,7 @@ namespace Shop.Web.Controllers
             using (var httpClient = new HttpClient(this.httpClientHandler))
             {
 
-                var response = await httpClient.GetAsync($"http://localhost:51810/api/Customer/" + id);
+                var response = await httpClient.GetAsync($"http://localhost:31881/api/Customer/{id}" + id);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -106,7 +110,7 @@ namespace Shop.Web.Controllers
                 {
                     StringContent content = new StringContent(JsonConvert.SerializeObject(customerCreate), Encoding.UTF8, "application/json");
 
-                    var response = await httpClient.PostAsync("http://localhost:51810/api/Student/SaveCustomer", content);
+                    var response = await httpClient.PostAsync("http://localhost:31881/api/Customer/SaveCustomer", content);
 
                     string apiResponse = await response.Content.ReadAsStringAsync();
 
@@ -132,7 +136,7 @@ namespace Shop.Web.Controllers
             }
         }
 
-        // GET: StudnetController/Edit/5
+        // GET: CustomerController/Edit/5
         public async Task<ActionResult> Edit(int id)
         {
 
@@ -141,7 +145,7 @@ namespace Shop.Web.Controllers
             using (var httpClient = new HttpClient(this.httpClientHandler))
             {
 
-                var response = await httpClient.GetAsync($"http://localhost:51810/api/Customer/" + id);
+                var response = await httpClient.GetAsync($"http://localhost:31881/api/Customer/UpdateCustomer" + id);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -173,7 +177,8 @@ namespace Shop.Web.Controllers
                 {
                     StringContent content = new StringContent(JsonConvert.SerializeObject(customerUpdate), Encoding.UTF8, "application/json");
 
-                    var response = await httpClient.PostAsync("http://localhost:51810/api/Student/UpdateCustomer", content);
+                    var response = await httpClient.PostAsync("http://localhost:31881/api/Customer/UpdateCustomer", content);
+                
 
                     string apiResponse = await response.Content.ReadAsStringAsync();
 
