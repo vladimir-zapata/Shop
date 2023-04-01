@@ -5,12 +5,8 @@ using Employee = Shop.DAL.Entities.Employee;
 
 namespace Shop.DAL.Interfaces
 {
-    public interface IEmployeeRepository
+    public interface IEmployeeRepository : IRepositoryBase<Employee>
     {
-        object GetEntities();
-        Shop.BLL.Dtos.EmployeeDto GetEntity(object empid);
-        void update(Shop.BLL.Dtos.EmployeeDto employee);
-
-        public interface IEmployeeRepository : IRepositoryBase<Employee> { }
+        
     }
 }

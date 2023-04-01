@@ -23,7 +23,7 @@ namespace Shop.DAL.Repositories
 
         public override Employee GetEntity(int id)
         {
-            return this._shopContext.Employees.FirstOrDefault(Employee=> Employee.empid == id && !Employee.Deleted);
+            return this._shopContext.Employees.FirstOrDefault(Employee=> Employee.Empid == id && !Employee.Deleted);
         }
 
         public override void Update(Employee entity)

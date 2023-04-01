@@ -1,12 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Shop.API.Request.Employee;
-using Shop.API.Responses;
-using Shop.DAL.Entities;
-using Shop.DAL.Interfaces;
-using Shop.DAL.Repositories;
-using System.Collections.Generic;
+using Shop.BLL.Contract;
+using Shop.BLL.Dtos;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+
 
 namespace Shop.API.Controllers
 {
@@ -14,51 +10,49 @@ namespace Shop.API.Controllers
     [ApiController]
     public class EmployeeController : ControllerBase
     {
-        private readonly IEmployeeRepository _employeeRepository;
-        public EmployeeController(IEmployeeRepository employeeRepository)
+        private readonly IEmployeeService _employeeService;
+        public EmployeeController(IEmployeeService employeeRepository)
         {
-            this._employeeRepository = employeeRepository;
+            this._employeeService = employeeRepository;
         }
 
         [HttpGet]
 
         public IActionResult GetAll() 
         {
-            var result = this._employeeRepository.GetAll();
+            var result = this._employeeService.GetAll();
 
-            if (!result.success)
-                return BadRequest(result);
                 return Ok(result);
         }
 
         [HttpGet("empid")]
         public IActionResult GetById(int id)
         {
-            var employee = _employeeRepository.GetById(id);
+            var employee = _employeeService.GetById(id);
             return Ok(employee);
         }
 
         [HttpPost("CreateEmployee")]
         public IActionResult createEmployee([FromBody] SaveEmployeeDto employee)
         {
-            var result = _employeeRepository.SaveEmployee(employee);
+            var result = _employeeService.SaveEmployee(employee);
             return Ok(result);
         }
 
         [HttpPost("UpdateEmployee")]
         public IActionResult ModifiyEmployee([FromBody] UpdateEmployeeDto employee)
         {
-            if (employee.Employeeid == 0) return BadRequest();
-            if (employee.Employeeid == 0) return BadRequest();
+            if (employee.RequestEmpid == 0) return BadRequest();
+            if (employee.RequestEmpid == 0) return BadRequest();
 
-            var result = _employeeRepository.UpdateEmployee(employee);
+            var result = _employeeService.UpdateEmployee(employee);
             return Ok(result);
         }
 
-        [HttpPost("DeleteProdcut")]
+        [HttpPost("DeleteEmployee")]
         public IActionResult Delete([FromBody] DeleteEmployeeDto employee)
         {
-            var result = _employeeRepository.DeleteEmployee(employee);
+            var result = _employeeService.DeleteEmployee(employee);
             return Ok(result);
 
         }

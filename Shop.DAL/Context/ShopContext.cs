@@ -12,8 +12,5 @@ namespace Shop.DAL.Context
         #region Employee
         public DbSet<Employee>? Employees { get; set; }
         #endregion
-        #region Employee
-        public DbSet<Employee>? Employees { get; set; }
-        #endregion
     }
 }

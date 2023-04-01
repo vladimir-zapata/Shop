@@ -13,15 +13,14 @@ using Shop.DAL.Interfaces;
 
 namespace Shop.BLL.Services
 {
-    public class EmployeeService : EmployeeServiceBase, IEmployeeService
+    public class EmployeeService : IEmployeeService
     {
-        private readonly IEmployeeRepository _employee;
-        private readonly object repository;
+        private readonly IEmployeeRepository _repository;
         private readonly ILogger _logger;
 
-        public EmployeeService(IEmployeeRepository repositoy, ILogger<IEmployeeRepository> logger)
+        public EmployeeService(IEmployeeRepository repository, ILogger<IEmployeeRepository> logger)
         {
-            repository = repository;
+            this._repository = repository;
             this._logger = logger;
         }
 
@@ -33,10 +32,7 @@ namespace Shop.BLL.Services
             {
                 _logger.LogInformation("Consultando Empleados");
 
-                var employees = _employee
-                    .GetEntities()
-                    .select(x => x.GetEmployeeModelFromEmployee())
-                    .ToList();
+                var employees = _repository.GetEntities().ToList();
 
                 result.Data = employees;
             }
@@ -61,33 +57,28 @@ namespace Shop.BLL.Services
 
         public ServiceResult GetById(int id)
         {
-            return GetById(id, employee);
-        }
-
-        public ServiceResult GetById(int id, Employee employee)
-        {
-            return GetById(id, employee, employee);
-        }
-
-        public ServiceResult GetById(int id, Employee employee, Employee employee)
-        {
             ServiceResult result = new ServiceResult();
 
             try
             {
                 _logger.LogInformation($"Consultando empleados con id {id}");
-                Employee Employee = repository.GetEntity(id);
+                Employee employee = _repository.GetEntity(id);
 
-                if (Employee == null || Employee.Deleted)
+                if (employee == null || employee.Deleted)
                 {
                     result.Success = false;
                     result.Message = $"No se encontró empleado con id {id}";
                 }
                 else
                 {
-                    var EmployeeModel1 = employee.GetEmployeeModel1FromEmployee();
+                    var EmployeeModel = new EmployeeModel()
+                    {
+                        Empid = employee.Empid,
+                        EmployeeName = employee.Firstname,
+                        LastName = employee.Lastname
+                    };
 
-                    result.Data = EmployeeModel1;
+                    result.Data = EmployeeModel;
                 }
             }
 
@@ -113,9 +104,9 @@ namespace Shop.BLL.Services
 
             try
             {
-                EmployeeDto employee = savedEmployee.GetEmployeeFromSaveDto();
+                 Employee employee = savedEmployee.GetEmployeeFromSaveDto();
 
-                this._employee.Save(employee);
+                this._repository.Save(employee);
                 result.Success = true;
                 result.Message = "El empleado ha sido añadido correctamente";
             }
@@ -136,20 +127,20 @@ namespace Shop.BLL.Services
             return result;
         }
 
-        public ServiceResult UpdateEmployee(UpdateEmployeeDto updatedEmployee, IEmployeeRepository _employee)
+        public ServiceResult UpdateEmployee(UpdateEmployeeDto updatedEmployee)
         {
             ServiceResult result = new ServiceResult();
 
             try
             {
-                EmployeeDto employee = _employee.GetEntity(UpdateEmployee.Empid);
+                Employee employee = _repository.GetEntity(updatedEmployee.EmployeeId);
 
-                employee.EmployeeId = updatedEmployee.EmployeeId;
-                employee.FirstName = updatedEmployee.FirstName;
-                employee.LastName = updatedEmployee.LastName;
+                employee.Empid = updatedEmployee.EmployeeId;
+                employee.Firstname = updatedEmployee.FirstName;
+                employee.Lastname = updatedEmployee.LastName;
                 employee.ModifyDate = DateTime.Now;
 
-                this._employee.update(employee);
+                this._repository.Update(employee);
                 result.Success = true;
                 result.Message = "El empleado ha sido modificado con éxito";
             }
@@ -176,13 +167,13 @@ namespace Shop.BLL.Services
 
             try
             {
-                EmployeeDto employee = _employee.GetEntity(DeleteEmployee.Employeeid);
+                Employee employee = _repository.GetEntity(deletedEmployee.EmployeeId);
 
-                employee.DeleteUser = deleteEmployee.RequestUser;
+                employee.DeleteUser = deletedEmployee.EmployeeId;
                 employee.DeleteDate = DateTime.Now;
                 employee.Deleted = true;
 
-                this._employee.update(employee);
+                this._repository.Update(employee);
                 result.Success = true;
                 result.Message = "El empleado ha sido eliminado correctamente";
             }
@@ -201,6 +192,11 @@ namespace Shop.BLL.Services
             }
 
             return result;
+        }
+
+        public ServiceResult GetById(int id, Employee employee1, Employee employee2)
+        {
+            throw new NotImplementedException();
         }
     }
 }

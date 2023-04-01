@@ -27,3 +27,10 @@ namespace Shop.Web.Models
         public int mgrid { get; set; }
     }
 }
+
+namespace Shop.Web
+{
+    class ShopRoutesEmployee
+    {
+    }
+}

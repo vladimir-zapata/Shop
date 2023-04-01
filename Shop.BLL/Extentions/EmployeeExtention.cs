@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Shop.BLL.Dtos;
+using Shop.BLL.Models;
+using Shop.DAL.Entities;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,28 +9,35 @@ namespace Shop.BLL.Extentions
 {
     public static class EmployeeExtention
     {
-        public static employee GetEmployeeFromSaveDto(this Dtos.SaveEmployeeDto saveEmployee)
+        public static Employee GetEmployeeFromSaveDto(this SaveEmployeeDto saveEmployee)
         {
-            Employee employee = new employee()
+            Employee employee = new Employee()
             {
-                EmployeeName = saveEmployee.EmployeeName,
-                EmployeeId = saveEmployee.EmployeeId,
-                EmployeeLastName = saveEmployee.EmployeeLastName,
-                CreationUser = saveEmployee.RequestUser,
-                creationDate = DateTime.Now,
+                Firstname = saveEmployee.Firstname,
+                Lastname = saveEmployee.Lastname,
+                Address = "Una direccion",
+                City =  "Ciudad",
+                Birthdate= DateTime.Now,
+                Country = "Una pais",
+                Title = "Titulo",
+                Mgrid = 0,
+                TitleOfCourtesy = "Sr.",
+                Hiredate= DateTime.Now, 
+                Phone = "8098889090",
+                CreationUser = 5,
+                CreationDate = DateTime.Now,
             };
 
             return employee;
         }
 
-        public static EmployeeModel1 GetEmployeeModel1FromEmployee(this Employee employee)
+        public static EmployeeModel GetEmployeeModel1FromEmployee(this Employee employee)
         {
-            EmployeeModel pm = new EmployeeModel1()
+            EmployeeModel pm = new EmployeeModel()
             {
-                EmployeeName = employee.EmployeeName,
-                EmployeeId = employee.EmployeeId,
-                EmployeeLastName = employee.EmployeeLastName,
-                CreationDate = DateTime.Now,
+                EmployeeName = employee.Firstname,
+                Empid = employee.Empid,
+                LastName = employee.Lastname,
             };
             return pm;
         }
