@@ -2,52 +2,44 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using Shop.Web.Configuration;
+using Shop.Web.ApiServices.Interfaces;
 using Shop.Web.Models.Response;
 using Shop.Web.Models.Response.Products;
+using Shop.Web.ViewModels.Products;
 using System;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
-using Shop.Web.ViewModels.Products;
 
 namespace Shop.Web.Controllers
 {
     public class ProductController : Controller
     {
-        HttpClientHandler httpClientHandler = new HttpClientHandler();
+        private readonly IProductApiService _productApiService;
+        private readonly IConfiguration _configuration;
         private readonly ILogger<ProductController> _logger;
-        private readonly ShopRoutes _routeOptions;
 
-        public ProductController(ILogger<ProductController> logger, IConfiguration configuration)
+        public ProductController(
+            IProductApiService productApiService,
+            ILogger<ProductController> logger, 
+            IConfiguration configuration)
         {
+            this._productApiService= productApiService;
             this._logger = logger;
-            this._routeOptions = configuration.GetSection("Routes").Get<ShopRoutes>();
-
+            this._configuration = configuration;
         }
 
         public async Task<ActionResult> Index()
         {
             ProductListResponse productListResponse = new ProductListResponse();
-            try
+
+            productListResponse = await this._productApiService.GetProducts();
+
+            if (!productListResponse.Success) 
             {
-                var httpClient = new HttpClient(this.httpClientHandler);
-                var response = await httpClient.GetAsync(_routeOptions.Products.List);
+                return View();
+            } 
 
-                if (response.IsSuccessStatusCode)
-                {
-                    string apiResponse = await response.Content.ReadAsStringAsync();
-                    productListResponse = JsonConvert.DeserializeObject<ProductListResponse>(apiResponse);
-                }
-
-                return View(productListResponse.Data);
-            }
-            catch (Exception ex)
-            {
-                this._logger.LogError(ex.Message);
-            }
-
-            return View();
+            return View(productListResponse.Data);
         }
 
 
@@ -55,21 +47,11 @@ namespace Shop.Web.Controllers
         {
             ProductResponse productResponse = new ProductResponse();
 
-            try
-            {
-                var httpClient = new HttpClient(this.httpClientHandler);
-                var response = await httpClient.GetAsync(_routeOptions.Products.Get + $"/{id}");
+            productResponse = await this._productApiService.GetProduct(id);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    string apiResponse = await response.Content?.ReadAsStringAsync();
-                    productResponse = JsonConvert.DeserializeObject<ProductResponse>(apiResponse);
-                }
-
-            }
-            catch (Exception ex)
+            if (!productResponse.Success)
             {
-                this._logger.LogError(ex.Message);
+                return View();
             }
 
             return View(productResponse.Data);
@@ -85,53 +67,34 @@ namespace Shop.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(CreateProductViewModel productCreateRequest)
         {
-            BaseResponse baseResponse = new BaseResponse();
+            ProductResponse productResponse = new ProductResponse();
 
-            try
+            productResponse = await this._productApiService.SaveProduct(productCreateRequest);
+
+            if (!productResponse.Success)
             {
-                productCreateRequest.RequestUser = 3;
-
-                var httpClient = new HttpClient(this.httpClientHandler);
-
-                StringContent content = new StringContent(JsonConvert.SerializeObject(productCreateRequest), Encoding.UTF8, "application/json");
-
-                var response = await httpClient.PostAsync(_routeOptions.Products.Create, content);
-
-                string apiResponse = await response.Content.ReadAsStringAsync();
-
-                baseResponse = JsonConvert.DeserializeObject<BaseResponse>(apiResponse);
-
-                ViewBag.Message = baseResponse.Message;
-                ViewBag.Success = baseResponse.Success;
-            }
-            catch (Exception ex)
-            {
-                this._logger.LogError(ex.Message);
-                ViewBag.Message = baseResponse.Message;
+                ViewBag.Message = "Ha ocurrido un error al crear el producto";
+                ViewBag.Success = false;
+                return View();
             }
 
-            return View();
+            ViewBag.Message = "Producto actualizado correctamente";
+            ViewBag.Success = true;
+
+            return View(productResponse.Data);
         }
 
         public async Task<ActionResult> Edit(int id)
         {
             ProductResponse productResponse = new ProductResponse();
 
-            try
-            {
-                var httpClient = new HttpClient(this.httpClientHandler);
-                var response = await httpClient.GetAsync(_routeOptions.Products.Get + $"/{id}");
+            productResponse = await this._productApiService.GetProduct(id);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    string apiResponse = await response.Content?.ReadAsStringAsync();
-                    productResponse = JsonConvert.DeserializeObject<ProductResponse>(apiResponse);
-                }
-
-            }
-            catch (Exception ex)
+            if (!productResponse.Success)
             {
-                this._logger.LogError(ex.Message);
+                ViewBag.Message = "Ha ocurrido un error al obtener el producto";
+                ViewBag.Success = false;
+                return View();
             }
 
             return View(productResponse.Data);
@@ -139,102 +102,33 @@ namespace Shop.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(UpdateProductViewModel productRequest)
+        public async Task<ActionResult> Edit(UpdateProductViewModel updateProductViewModel)
         {
-            BaseResponse baseResponse = new BaseResponse();
+            ProductResponse productResponse = new ProductResponse();
 
-            try
-            {
-                productRequest.RequestUser = 3;
+            productResponse = await this._productApiService.EditProduct(updateProductViewModel);
 
-                var httpClient = new HttpClient(this.httpClientHandler);
-
-                StringContent content = new StringContent(JsonConvert.SerializeObject(productRequest), Encoding.UTF8, "application/json");
-
-                var response = await httpClient.PostAsync(_routeOptions.Products.Update, content);
-
-                string apiResponse = await response.Content.ReadAsStringAsync();
-
-                baseResponse = JsonConvert.DeserializeObject<BaseResponse>(apiResponse);
-
-                if(response.IsSuccessStatusCode) 
-                {
-                    return RedirectToAction(nameof(Index));
-                } 
-                else 
-                {
-                    ViewBag.Message = baseResponse.Message;
-                    return View();
-                }
-            }
-            catch (Exception ex)
-            {
-                this._logger.LogError(ex.Message);
-                ViewBag.Message = baseResponse.Message;
-                return View();
-            }
+            return RedirectToAction(nameof(Index));
         }
 
         public async Task<ActionResult> Delete(int id)
         {
             ProductResponse productResponse = new ProductResponse();
 
-            try
-            {
-                var httpClient = new HttpClient(this.httpClientHandler);
-                var response = await httpClient.GetAsync(_routeOptions.Products.Get + $"/{id}");
-
-                if (response.IsSuccessStatusCode)
-                {
-                    string apiResponse = await response.Content?.ReadAsStringAsync();
-                    productResponse = JsonConvert.DeserializeObject<ProductResponse>(apiResponse);
-                }
-
-            }
-            catch (Exception ex)
-            {
-                this._logger.LogError(ex.Message);
-            }
+            productResponse = await this._productApiService.GetProduct(id);
 
             return View(productResponse.Data);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(ProductDeleteRequest productDeleteRequest)
+        public async Task<ActionResult> Delete(DeleteProductViewModel productDeleteRequest)
         {
-            BaseResponse baseResponse = new BaseResponse();
+            ProductResponse productResponse = new ProductResponse();
 
-            try
-            {
-                productDeleteRequest.RequestUser = 3;
+            productResponse = await this._productApiService.DeleteProduct(productDeleteRequest);
 
-                var httpClient = new HttpClient(this.httpClientHandler);
-
-                StringContent content = new StringContent(JsonConvert.SerializeObject(productDeleteRequest), Encoding.UTF8, "application/json");
-
-                var response = await httpClient.PostAsync(_routeOptions.Products.Delete, content);
-
-                string apiResponse = await response.Content.ReadAsStringAsync();
-
-                baseResponse = JsonConvert.DeserializeObject<BaseResponse>(apiResponse);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-                else
-                {
-                    ViewBag.Message = baseResponse.Message;
-                    return View();
-                }
-            }
-            catch (Exception ex)
-            {
-                this._logger.LogError(ex.Message);
-                ViewBag.Message = baseResponse.Message;
-                return View();
-            }
+            return RedirectToAction(nameof(Index));
         }
     }
 }

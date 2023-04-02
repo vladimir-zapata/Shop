@@ -1,6 +1,6 @@
 ﻿namespace Shop.Web.ViewModels.Products
 {
-    public class ProductDeleteRequest
+    public class DeleteProductViewModel
     {
         public int ProductId { get; set; }
         public int RequestUser { get; set; }
