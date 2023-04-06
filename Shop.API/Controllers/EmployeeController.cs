@@ -39,17 +39,16 @@ namespace Shop.API.Controllers
             return Ok(result);
         }
 
-        [HttpPost("UpdateEmployee")]
+        [HttpPut("UpdateEmployee")]
         public IActionResult ModifiyEmployee([FromBody] UpdateEmployeeDto employee)
         {
-            if (employee.RequestEmpid == 0) return BadRequest();
-            if (employee.RequestEmpid == 0) return BadRequest();
+            if (employee.EmployeeId == 0) return BadRequest();
 
             var result = _employeeService.UpdateEmployee(employee);
             return Ok(result);
         }
 
-        [HttpPost("DeleteEmployee")]
+        [HttpDelete("DeleteEmployee")]
         public IActionResult Delete([FromBody] DeleteEmployeeDto employee)
         {
             var result = _employeeService.DeleteEmployee(employee);

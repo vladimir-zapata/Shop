@@ -11,8 +11,8 @@ namespace Shop.BLL.Dtos
         public string LastName { get; set; }
         public string FirstName { get; set; } 
         public DateTime HireDate { get; set; }
-        public object DeleteUser { get; internal set; }
-        public DateTime DeleteDate { get; internal set; }
-        public bool Deleted { get; internal set; }
+      //  public object DeleteUser { get; internal set; }
+      //  public DateTime DeleteDate { get; internal set; }
+       // public bool Deleted { get; internal set; }
     }
 }
