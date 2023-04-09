@@ -1,55 +1,55 @@
 ﻿@model IEnumerable<Shop.Web.Models.OrdersModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Órdenes";
 }
 
-<h1>Orders</h1>
+<h1>Órdenes</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Crear nuevo</a>
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.OrderID)
+                ID de orden
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CustID)
+                ID de cliente
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EmpID)
+                ID de empleado
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.OrderDate)
+                Fecha de la orden
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ShippedDate)
+                Fecha de envío
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ShipperID)
+                ID de expedidor
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Freight)
+                Flete
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ShipName)
+                Nombre del envio
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ShipAddress)
+                Dirección de envío
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ShipCity)
+                Ciudad
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ShipRegion)
+                Región
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ShipPostalCode)
+                Código postal
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ShipCountry)
+                País
             </th>
             <th></th>
         </tr>
@@ -97,9 +97,9 @@
                 @Html.DisplayFor(modelItem => item.ShipCountry)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                @Html.ActionLink("Edit", "Edit", new { id = item.OrderID }) |
+                @Html.ActionLink("Details", "Details", new { id = item.OrderID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.OrderID })
             </td>
         </tr>
 }

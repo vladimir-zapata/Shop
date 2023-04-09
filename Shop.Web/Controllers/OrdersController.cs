@@ -1,139 +1,134 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Shop.Web.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Shop.Web.ApiServices.Interfaces;
+using Shop.Web.Models.Response;
+using Shop.Web.Models.Response.Orders;
+using Shop.Web.ViewModels.Orders;
 using System;
-using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Shop.Web.Controllers
 {
     public class OrdersController : Controller
     {
-        // GET: OrdersController
-        public ActionResult Index()
+        private readonly IOrdersApiService _ordersApiService;
+        private readonly IConfiguration _configuration;
+        private readonly ILogger<OrdersController> _logger;
+
+        public OrdersController(
+            IOrdersApiService ordersApiService,
+            ILogger<OrdersController> logger,
+            IConfiguration configuration)
         {
-            List<OrdersModel> orders = new List<OrdersModel>()
+            this._ordersApiService = ordersApiService;
+            this._logger = logger;
+            this._configuration = configuration;
+        }
+
+        public async Task<ActionResult> Index()
+        {
+            OrdersListResponse ordersListResponse = new OrdersListResponse();
+
+            ordersListResponse = await this._ordersApiService.GetOrders();
+
+            if (!ordersListResponse.Success)
             {
-                new OrdersModel()
-                {
-                    OrderID = 1001,
-                    CustID = 101,
-                    EmpID = 430,
-                    OrderDate = new DateTime(2023, 11, 02),
-                    ShippedDate = new DateTime(2023, 11, 09),
-                    ShipperID = 100,
-                    Freight = 199.99,
-                    ShipName = "AJ001",
-                    ShipAddress = "1798 ave 1st Apt 203",
-                    ShipCity = "Miami",
-                    ShipRegion = "Miami-Dade County",
-                    ShipCountry = "United States",
-                    ShipPostalCode = 32129
+                return View();
+            }
 
-
-                },
-                new OrdersModel()
-                {
-                    OrderID = 1002,
-                    CustID = 102,
-                    EmpID = 431,
-                    OrderDate = new DateTime(2023, 11, 02),
-                    ShippedDate = new DateTime(2023, 11, 10),
-                    ShipperID = 101,
-                    Freight = 99.99,
-                    ShipName = "AJ002",
-                    ShipAddress = "7135 SW 117th Ave",
-                    ShipCity = "Miami",
-                    ShipRegion = "Miami-Dade County",
-                    ShipCountry = "United States",
-                    ShipPostalCode = 33183
-                },
-                new OrdersModel()
-                {
-                    OrderID = 1003,
-                    CustID = 103,
-                    EmpID = 431,
-                    OrderDate = new DateTime(2023, 11, 02),
-                    ShippedDate = new DateTime(2023, 11, 08),
-                    ShipperID = 102,
-                    Freight = 353.32,
-                    ShipName = "AJ003",
-                    ShipAddress = "2488 N University Dr",
-                    ShipCity = "Pembroke Pines",
-                    ShipRegion = "Broward County",
-                    ShipCountry = "United States",
-                    ShipPostalCode = 33024
-                }
-             };
-            return View(orders);
+            return View(ordersListResponse.Data);
         }
 
-        // GET: OrdersController/Details/5
-        public ActionResult Details(int id)
+
+        public async Task<ActionResult> Details(int id)
         {
-            return View();
-        }
+            OrdersResponse ordersResponse = new OrdersResponse();
 
-        // GET: OrdersController/Create
+            ordersResponse = await this._ordersApiService.GetOrder(id);
+
+            if (!ordersResponse.Success)
+            {
+                return View();
+            }
+
+            return View(ordersResponse.Data);
+        }   
+
+        [HttpGet]
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: OrdersController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create(CreateOrdersViewModel ordersCreateRequest)
         {
-            try
+            OrdersResponse ordersResponse = new OrdersResponse();
+
+            ordersResponse = await this._ordersApiService.SaveOrder(ordersCreateRequest);
+
+            if (!ordersResponse.Success)
             {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
+                ViewBag.Message = "Ha ocurrido un error al crear la orden";
+                ViewBag.Success = false;
                 return View();
             }
+
+            ViewBag.Message = "Orden actualizada correctamente";
+            ViewBag.Success = true;
+
+            return View(ordersResponse.Data);
         }
 
-        // GET: OrdersController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            return View();
+            OrdersResponse ordersResponse = new OrdersResponse();
+
+            ordersResponse = await this._ordersApiService.GetOrder(id);
+
+            if (!ordersResponse.Success)
+            {
+                ViewBag.Message = "Ha ocurrido un error al obtener la orden";
+                ViewBag.Success = false;
+                return View();
+            }
+
+            return View(ordersResponse.Data);
         }
 
-        // POST: OrdersController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(UpdateOrdersViewModel updateOrdersViewModel)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            OrdersResponse ordersResponse = new OrdersResponse();
+
+            ordersResponse = await this._ordersApiService.EditOrder(updateOrdersViewModel);
+
+            return RedirectToAction(nameof(Index));
         }
 
-        // GET: OrdersController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            return View();
+            OrdersResponse ordersResponse = new OrdersResponse();
+
+            ordersResponse = await this._ordersApiService.GetOrder(id);
+
+            return View(ordersResponse.Data);
         }
 
-        // POST: OrdersController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(DeleteOrdersViewModel deleteOrdersViewModel)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            OrdersResponse ordersResponse = new OrdersResponse();
+
+            ordersResponse = await this._ordersApiService.DeleteOrder(deleteOrdersViewModel);
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

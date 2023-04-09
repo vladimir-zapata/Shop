@@ -1,0 +1,100 @@
+﻿@model Shop.Web.Models.OrdersModel
+
+@{
+    ViewData["Title"] = "Borrar orden";
+}
+
+<h1>Borrar</h1>
+
+<h3>¿Estás seguro de que deseas borrar esta orden?</h3>
+<br>
+<div>
+    <h4>OrdersModel</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.OrderID)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.OrderID)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.CustID)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CustID)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.EmpID)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.EmpID)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.OrderDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.OrderDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ShippedDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ShippedDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ShipperID)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ShipperID)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Freight)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Freight)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ShipName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ShipName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ShipAddress)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ShipAddress)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ShipCity)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ShipCity)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ShipRegion)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ShipRegion)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ShipPostalCode)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ShipPostalCode)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ShipCountry)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ShipCountry)
+        </dd>
+    </dl>
+    
+    <form asp-action="Borrar">
+        <input hidden asp-for="OrderID" class="form-control" value="@Model.OrderID" />
+        <input type="submit" value="Borrar" class="btn btn-danger" /> |
+        <a asp-action="Index">Volver a la lista</a>
+    </form>
+</div>
