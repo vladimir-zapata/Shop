@@ -15,8 +15,7 @@ namespace Shop.BLL.Extentions
                 CompanyName = saveDto.CompanyName,
                 CreationDate = saveDto.CreationDate,
                 CreationUser = saveDto.CreationUser,
-                ContactName = saveDto.ContactName,
-                EnrollmentDate = saveDto.EnrollmentDate
+               
             };
 
             return customer;

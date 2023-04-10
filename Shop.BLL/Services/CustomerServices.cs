@@ -9,20 +9,16 @@ using Shop.DAL.Interfaces;
 using Shop.BLL.Extentions;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Linq;
-using System.Resources;
-using Shop.DAL.Repository;
-using System.Runtime.Serialization;
 
 
 namespace shop.BLL.Services
 {
     public class CustomerService : ICustomerService
     {
-        private readonly CustomerRepository customerRepository;
+        private readonly ICustomerRepository customerRepository;
         private readonly ILogger<CustomerService> logger;
 
-        public CustomerService(CustomerRepository customerRepository,
+        public CustomerService(ICustomerRepository customerRepository,
                               ILogger<CustomerService> logger)
         {
             this.customerRepository = customerRepository;
@@ -34,14 +30,7 @@ namespace shop.BLL.Services
 
             try
             {
-                var customers = this.customerRepository.GetEntities().Select(cd => new CustomerResultModel()
-                {
-                    CreationDate = cd.CreationDate,
-                    EnrollmentDate = cd.EnrollmentDate.Value,
-                    CompanyName = cd.CompanyName,
-                    ContactName = cd.ContactName,
-                    CustomerId = cd.Id
-                }).ToList();
+                var customers = this.customerRepository.GetEntities();
 
                 result.Data = customers;
                 result.Success = true;
@@ -64,16 +53,7 @@ namespace shop.BLL.Services
             {
                 var customer = this.customerRepository.GetEntity(Id);
 
-                CustomerResultModel customerResultModel = new CustomerResultModel()
-                {
-                    CreationDate = customer.CreationDate,
-                    EnrollmentDate = customer.EnrollmentDate.Value,
-                    CompanyName = customer.CompanyName,
-                    ContactName = customer.ContactName,
-                    CustomerId = customer.Id
-                };
-
-                result.Data = customerResultModel;
+                result.Data = customer;
                 result.Success = true;
             }
             catch (Exception ex)
@@ -115,54 +95,26 @@ namespace shop.BLL.Services
 
         public ServiceResult SaveCustomer(CustomerSaveDto saveDto)
         {
-
-            this.logger.LogInformation("Paso por aqui", saveDto.CompanyName);
             ServiceResult result = new ServiceResult();
-
-            if (string.IsNullOrEmpty(saveDto.CompanyName))
-            {
-                result.Success = false;
-                result.Message = "El nombre es requerido";
-                return result;
-            }
-
-            if (saveDto.CompanyName.Length > 50)
-            {
-                result.Success = false;
-                result.Message = "La logitud del nombre es inválida";
-                return result;
-            }
-
-            if (string.IsNullOrEmpty(saveDto.ContactName))
-            {
-                result.Success = false;
-                result.Message = "El contacto es requerido";
-                return result;
-            }
-            if (saveDto.CompanyName.Length > 50)
-            {
-                result.Success = false;
-                result.Message = "La logintud del contacto es inválida";
-                return result;
-            }
-
-            if (!saveDto.EnrollmentDate.HasValue)
-            {
-                result.Success = false;
-                result.Message = "La fecha de inicio es requerida.";
-                return result;
-
-            }
 
             try
             {
                 Customer customer = saveDto.GetCustomerEntityFromDtoSave();
+                customer.address = "Una calle";
+                customer.city = "Santo Domingo";
+                customer.fax = "8099088978";
+                customer.email = "test@test.com";
+                customer.phone = "829-804-8998";
+                customer.contacttitle = "Sr.";
+                customer.country = "Haiti";
+                customer.region = "Saint Domingue";
+                customer.contactname = "Jose";
                 this.customerRepository.Save(customer);
+                this.customerRepository.SaveChanges();
                 result.Success = true;
                 result.Message = "El cliente ha sido agregado correctamente.";
 
                 this.logger.LogInformation(result.Message, result);
-
 
             }
             catch (CustomerException sdex)
@@ -228,8 +180,8 @@ namespace shop.BLL.Services
                 customer.ModifyDate = updateDto.ModifyDate;
                 customer.UserMod = updateDto.ModifyUser;
                 customer.CompanyName = updateDto.CompanyName;
-                customer.ContactName = updateDto.ContactName;
-                customer.EnrollmentDate = updateDto.EnrollmentDate;
+                customer.email = updateDto.ContactName;
+                customer.fax = updateDto.CompanyName;
 
                 this.customerRepository.Update(customer);
                 result.Success = true;

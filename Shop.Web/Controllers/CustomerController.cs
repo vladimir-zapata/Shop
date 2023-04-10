@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Shop.Web.Models;
-using System.Collections.Generic;
 using Shop.Web.Models.Request;
 using Shop.Web.Models.Responses;
 using Microsoft.Extensions.Configuration;
@@ -11,9 +10,7 @@ using System;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Routing;
-using System.Reflection.Metadata;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+
 
 namespace Shop.Web.Controllers
 {
@@ -38,7 +35,7 @@ namespace Shop.Web.Controllers
             {
                 using (var httpClient = new HttpClient(this.httpClientHandler))
                 {
-                    var response = await httpClient.GetAsync("http://localhost:31881/swagger/index.html");
+                    var response = await httpClient.GetAsync("http://localhost:31881/api/Customer");
                    
 
                     if (response.IsSuccessStatusCode)
@@ -73,7 +70,7 @@ namespace Shop.Web.Controllers
             using (var httpClient = new HttpClient(this.httpClientHandler))
             {
 
-                var response = await httpClient.GetAsync($"http://localhost:31881/api/Customer/{id}" + id);
+                var response = await httpClient.GetAsync($"http://localhost:31881/api/Customer/" + id);
 
                 if (response.IsSuccessStatusCode)
                 {
